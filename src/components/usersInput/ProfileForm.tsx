@@ -61,6 +61,7 @@ const ProfileInputForm = () => {
   const [userEmail, setUserEmail] = useState<string | undefined>();
   const {  setProfileId } = useUser();
   const [loading, setLoading] = useState(false);
+  const [loader,setLoader]= useState(false);
   const router = useRouter()
   const[userid, setUserid] = useState<string | undefined>();
   type ProfileFormValue = z.infer<typeof formSchema>;
@@ -69,7 +70,7 @@ const ProfileInputForm = () => {
   useEffect(() => {
     async function fetchUserData() {
       try {
-        setLoading(true);
+        setLoader(true);
         const userData = await userdata(); // Fetch the email and ID
         if (!userData) {
           console.error('No session found. Redirecting to login.');// Redirect to login page
@@ -82,9 +83,12 @@ const ProfileInputForm = () => {
       }
     }
     fetchUserData();
-    setLoading(false);
+    setLoader(false);
   }, [router]);
 
+  if (loader){
+    <div className='w-full h-screen flex items-center justify-center'><span className='loader'></span></div>
+  }
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

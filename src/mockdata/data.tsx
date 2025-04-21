@@ -339,7 +339,7 @@ export const currentUserProfile: UserProfile = {
     avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1974&auto=format&fit=crop',
     location: 'Seattle, WA',
     photo_url: ['https://thumbs.dreamstime.com/b/simple-indian-girl-sweet-smile-happy-face-44021920.jpg','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9Quz667dN8Z0imZYdhWLFMz2DUKN8ulU_kQ&s'],
-    memberSince: 'January 2023',
+    created_at: 'January 2023',
     gender: 'male',
     interested_in: 'female',
     interests: ['Travel', 'Photography', 'Coffee', 'Hiking', 'Movies', 'Food'],

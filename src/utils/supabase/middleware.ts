@@ -37,7 +37,17 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
- 
+  if(user && (request.nextUrl.pathname === `/profile-form` || request.nextUrl.pathname === `/`)){
+    const { data:profile } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('user_id',user.id)
+    .single();
+
+    if(profile){
+      return NextResponse.redirect(new URL(`/home/${profile.id}`,request.url))
+    }
+  }
 
   if (
     !user &&

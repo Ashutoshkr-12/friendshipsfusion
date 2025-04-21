@@ -3,31 +3,26 @@ import { ThemeProvider } from "@/components/theme-provider"
 import "./globals.css";
 import { Toaster } from "sonner";
 import { UserProvider } from "@/hooks/profileIdContext";
+import { ThemeScript } from "@/lib/theme-script";
 
 export const metadata: Metadata = {
   title: "Friendship fusion",
   description: "A place where you really find a friend",
 };
 
-export default function RootLayout({
+export default  function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+
+ 
+
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-      <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                if (localStorage.getItem('theme') === 'light') {
-                  document.documentElement.classList.remove('dark');
-                }
-              })();
-            `,
-          }}
-        />
+        <ThemeScript/>
       </head>
       <body>
            <ThemeProvider>
