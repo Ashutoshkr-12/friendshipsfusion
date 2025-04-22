@@ -55,9 +55,11 @@ export default function ProfileForm() {
       formData.append("email",data.email);
       formData.append("password",data.password);
       await signup(formData);
+   
     } catch (error) {
       console.log(error)
     } finally{
+      toast('An confirmation link has been send to your email')
       setLoading(false);
     }
   };
@@ -142,7 +144,7 @@ export default function ProfileForm() {
               {searchParam}
             </p>
           )}
-              <Button onClick={ ()=>toast('An confirmation link has been send to your email')}
+              <Button 
               disabled={loading} type="submit"  className={`flex w-full justify-center rounded-md px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs ${
                 loading
                   ? "bg-gray-900 cursor-not-allowed"

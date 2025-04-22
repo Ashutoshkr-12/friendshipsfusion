@@ -30,8 +30,6 @@ export async function login(formData: FormData) {
   // Pass the token to ProfileForm via a query parameter or shared state
   redirect(`/?token=${token}`);
   
-  revalidatePath("/", "layout");
-  redirect("/");
 }
 
 export async function signup(formData: FormData) {
@@ -43,12 +41,13 @@ export async function signup(formData: FormData) {
     password: formData.get("password") as string,
   });
 
-  if (error) {
+  if(!error){
+   revalidatePath("/login", "layout");
+   redirect("/login?message=A confirmation mail has been send to your email click that link to proceed");
+ }
+  if(error) {
     redirect("/signup?message=could not authenticate user");
   }
-
-  revalidatePath("/login", "layout");
-  redirect("/login?message=A confirmation mail has been send to your email click that link to proceed");
 }
 
 export async function getUsersession(){
