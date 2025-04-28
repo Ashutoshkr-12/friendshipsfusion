@@ -1,17 +1,16 @@
 import { supabase } from '@/utils/supabase/supabase';
 import { profiles  } from '@/lib/types';
-import { useUser } from '@/hooks/profileIdContext';
 
 
 export const fetchedProfiles= async ():Promise<profiles[]>=>{
     
 try {
-   // const {profileId} = useUser();
+  const profileId = localStorage.getItem('profileId')
    
         const { data, error} = await supabase
         .from('profiles')
         .select('*')
-       // .neq('id', profileid);
+        .neq('id', profileId);
     
         if(error){
             throw error;

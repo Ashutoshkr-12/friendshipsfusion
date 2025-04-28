@@ -15,7 +15,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { signOut } from "@/serverActions/authAction";
 import { AspectRatio } from "../ui/aspect-ratio";
-import Image from "next/image";
 
 interface UserProfileProps {
   userProfile: UserProfileType;

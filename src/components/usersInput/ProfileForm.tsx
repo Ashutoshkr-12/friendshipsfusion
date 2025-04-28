@@ -15,7 +15,6 @@ import Image from 'next/image';
 import { ensureStorageBucket, supabase } from '@/utils/supabase/supabase';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { toast } from 'sonner';
-import { useUser } from '@/hooks/profileIdContext';
 
 const MAX_FILE_SIZE = 6 * 1024 * 1024; // 6MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -59,7 +58,6 @@ const ProfileInputForm = () => {
     const [photo1Preview, setPhoto1Preview] = useState<File | null | string>(null);
     const [photo2Preview, setPhoto2Preview] = useState<File | null | string>(null);
   const [userEmail, setUserEmail] = useState<string | undefined>();
-  const {  setProfileId } = useUser();
   const [loading, setLoading] = useState(false);
   const [loader,setLoader]= useState(false);
   const router = useRouter()
@@ -229,7 +227,6 @@ const ProfileInputForm = () => {
         toast.error(profileError.message)
       }
       const profileid = data?.id
-      setProfileId(profileid)
       redirect(`/home/${profileid}`);
     }
   }

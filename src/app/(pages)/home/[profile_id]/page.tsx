@@ -14,14 +14,14 @@ const Index = () => {
   const [profile, setProfiles] = useState<profiles[]>([]);
   const [loading, setLoading] = useState(true);
 //  const [ message, setMessage] = useState('');
-  const [userid, setUserid] = useState<string | undefined>();
+  const [profile_Id, setProfileid] = useState<string | undefined>();
   const params = useParams();
 
   useEffect(() => {
     // Set the userId from search parameters
     const userId = params.profile_id as string;
    // const userId = router.query.Id;
-    setUserid(userId as string || undefined);
+   setProfileid(userId as string || undefined);
     //console.log('User ID:', userId);
   }, [params]);
 
@@ -52,7 +52,7 @@ const Index = () => {
   const handleSwipeRight = async (profile: profiles) => {
 
 // getting current user id.....    
-    if (!userid) {
+    if (!profile_Id) {
       console.error('User ID is not set.');
       return;
     }
@@ -62,14 +62,14 @@ const Index = () => {
       .from('likes')
       .upsert(
         {
-        liker_id: userid, // Use the userId from search parameters
+        liker_id: profile_Id, // Use the userId from search parameters
         liked_id: profile.id,
         created_at: new Date().toISOString(),
       },
   );
 
-    if (likeError) {
-      console.error( 'Profile liking error', likeError );
+    if (likeError?.code === '22P02') {
+    toast( 'Profile already liked' );
       // Handle error (e.g., show a message to the user)
       return;
     }
@@ -80,7 +80,7 @@ const Index = () => {
     .insert({
       user_id: profile.id, //other user
       type:'like',
-      from_user_id: userid,  //me
+      from_user_id: profile_Id,  //me
       created_at: new Date().toISOString(),
     });
 
@@ -108,6 +108,7 @@ const Index = () => {
     }
   };
 
+ 
   return (
     <AppLayout>
       <div className="container mx-auto px-4 py-6 max-w-7xl overflow-hidden">
@@ -115,10 +116,11 @@ const Index = () => {
           <h1 className="text-2xl font-bold mb-6 text-center md:text-left">
             Find Your Match
           </h1>
-          <div>
-            <Link href={`/notifications/${userid}`}>
-            <Bell size={30} className="mr-4 cursor-pointer"></Bell>
-          </Link>
+          <div className='relative bg-green-500 w-10 h-10 flex items-center p-1 '>
+            <Link href={`/notifications/${profile_Id}`}>
+            <Bell size={30} className="mr-4 cursor-pointer"/>
+           <span className='absolute  h-4 w-4 rounded-full  text-red-600 bg-red-600'></span>
+          </Link> 
           </div>
 
         </div>

@@ -1,4 +1,5 @@
 
+
 export type profiles = {
     id: string;
     name: string;
@@ -21,55 +22,62 @@ export type Notification = {
   user_id: string;
   from_user_id: string;
   is_read: boolean;
-  profiles:{
-    name: string;
-    avatar: string;
-  }
+  profiles:any;
+//   profiles: {
+//     name: string ,
+//     avatar: string   
+// }                        
 }
   
-  export interface RentalProfile {
+
+export interface Message {
+  id: string;
+  content: string;
+  created_at: string;
+  sender_id: string | boolean;
+  match_id: string;
+}
+
+export interface messageProfile {
+  id: string;
+  name: string | null;
+  avatar: string | null;
+}
+
+export interface ChatConversation {
+  id: string;
+  person: {
     id: string;
     name: string;
-    age: number;
-    bio: string;
     profilePicture: string;
-    hourlyRate: number;
-    rating: number;
-    reviewCount: number;
-    location: string;
-    services: string[];
-    availability: string;
-  }
-  
-  export interface Message {
-    id: string;
-    content: string;
-    timestamp: string;
-    fromMe: boolean;
-  }
-  
-  export interface ChatConversation {
-    id: string;
-    person: {
-      id: string;
-      name: string;
-      profilePicture: string;
-    };
-    lastMessage: string;
-    lastMessageTime: string;
-    unreadCount: number;
-    type: 'date' | 'rental';
-    messages: Message[];
-  }
-  
-  export interface Match {
-    id: string;
-    name: string;
-    age: number;
-    profilePicture: string;
-    matchDate: string;
-  }
-  
+  };
+  lastMessage: string;
+  lastMessageTime: string;
+  unreadCount: number;
+  type: 'date' | 'rental';
+  messages: Message[];
+}
+
+export interface Match {
+  id: string;
+  user1_id: string;
+  user2_id: string;
+  created_at: string;
+}
+
+export interface RentalProfile {
+  id: string;
+  name: string;
+  age: number;
+  bio: string;
+  profilePicture: string;
+  hourlyRate: number;
+  rating: number;
+  reviewCount: number;
+  location: string;
+  services: string[];
+  availability: string;
+}
   export interface RentalHistory {
     id: string;
     name: string;

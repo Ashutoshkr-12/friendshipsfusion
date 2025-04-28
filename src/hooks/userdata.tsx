@@ -26,9 +26,11 @@ import { createClient } from '@/utils/supabase/server';
    //console.log(profileid)
    if(idError){
     console.error('Error in Fetching ID in userdata',idError)
+    return null;
    }
+   const profileId = profileid?.id || null;
+   
 
-   const profileId = profileid 
     return {
       profileId,
       email: users?.email,

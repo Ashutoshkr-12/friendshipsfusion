@@ -44,8 +44,6 @@ const SwipeCard: React.FC<SwipeCardProps> = ({ profile,  }) => {
           <div className="absolute bottom-1/7 sm:bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 text-white">
             <div className="flex items-center gap-3 mb-1">
               <h3 className="text-3xl font-bold">{profile.name}, {profile.age}</h3>
-             
-            
             </div>
             <p className="text-xl mb-2 flex items-end gap-1 font-semibold"><MapPin/>{profile.location}</p>
             <p className="text-white/90">{profile.bio}</p>
