@@ -22,6 +22,7 @@ export type Notification = {
   user_id: string;
   from_user_id: string;
   is_read: boolean;
+  metadata: { match_id: string };
   profiles:any;
 //   profiles: {
 //     name: string ,
@@ -69,14 +70,18 @@ export interface RentalProfile {
   id: string;
   name: string;
   age: number;
-  bio: string;
-  profilePicture: string;
-  hourlyRate: number;
-  rating: number;
-  reviewCount: number;
+  gender: string;
+  height: number;
+  weight: number;
   location: string;
+  language: string;
+  bio: string;
   services: string[];
-  availability: string;
+  hourly_rent: number;
+  photo_url: string;
+  occupation: string;
+  profile_id: string;
+  availability: boolean;
 }
   export interface RentalHistory {
     id: string;

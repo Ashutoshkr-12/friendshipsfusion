@@ -15,14 +15,46 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { signOut } from "@/serverActions/authAction";
 import { AspectRatio } from "../ui/aspect-ratio";
+import { supabase } from "@/utils/supabase/supabase";
+import { useUser } from "@/hooks/profileIdContext";
+import { toast } from "sonner";
 
 interface UserProfileProps {
   userProfile: UserProfileType;
 }
 
 const UserProfile: React.FC<UserProfileProps> = ({ userProfile }) => {
+  const{ profileId} = useUser();
   const [tab, setTab] = useState("info");
+  const [name, setName] = useState(userProfile.name);
+  const [age, setAge] = useState(userProfile.age);
+  const [bio, setBio] = useState(userProfile.bio);
+  const [location, setLocation] = useState(userProfile.location);
+  const [interests, setInterests] = useState(userProfile.interests);
 
+
+  const handleUpdate = async()=>{
+    const {  error} = await supabase
+    .from('profiles')
+    .update({
+      name,
+      bio,
+      age,
+      location,
+      interests,
+    })
+    .eq('id',profileId)
+
+    if(error){
+      console.error('Error in updating profile:',error)
+      toast('Error in updating profile please try again later.')
+    }else{
+      toast('Updating profile.');
+      window.location.reload();
+    }
+  }
+
+  
   return (
     <div className="container max-w-4xl mx-auto py-8 px-4 border">
       {/* settings elements, avatar */}
@@ -117,35 +149,30 @@ const UserProfile: React.FC<UserProfileProps> = ({ userProfile }) => {
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
                 <Label htmlFor="name">Name</Label>
-                <Input id="name" defaultValue={userProfile.name} />
+                <Input id="name" onChange={(e)=>setName(e.target.value)} defaultValue={userProfile.name} />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="age">Age</Label>
+                <Input id="age" onChange={(e)=>setAge(parseInt(e.target.value))} type="number" defaultValue={userProfile.name} />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="bio">Bio</Label>
-                <Textarea id="bio" defaultValue={userProfile.bio} />
+                <Textarea id="bio" onChange={(e)=>setBio(e.target.value)} defaultValue={userProfile.bio} />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="location">Location</Label>
-                <Input id="location" defaultValue={userProfile.location} />
+                <Input id="location" onChange={(e)=>setLocation(e.target.value)} defaultValue={userProfile.location} />
               </div>
               <div className="grid gap-2">
                 <Label>Interests</Label>
                 <div className="flex flex-wrap gap-2">
-                  {userProfile.interests.map((interest, index) => (
-                    <Badge
-                      key={index}
-                      variant="outline"
-                      className="flex gap-1 items-center"
-                    >
-                      {interest}
-                    </Badge>
-                  ))}
-                  <Badge variant="outline" className="cursor-pointer">
-                    + Add
-                  </Badge>
+                <Input 
+                     onChange={(e) => setInterests(e.target.value.split(",").map(s => s.trim()))} defaultValue={userProfile.interests}></Input> 
+                 
                 </div>
               </div>
             </div>
-            <Button type="submit">Save changes</Button>
+            <Button onClick={handleUpdate}>Save changes</Button>
           </DialogContent>
         </Dialog>
       </div>

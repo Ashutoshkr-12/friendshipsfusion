@@ -82,7 +82,7 @@ const Index = () => {
       type:'like',
       from_user_id: profile_Id,  //me
       created_at: new Date().toISOString(),
-    });
+    }); 
 
 
     if(notifyError){

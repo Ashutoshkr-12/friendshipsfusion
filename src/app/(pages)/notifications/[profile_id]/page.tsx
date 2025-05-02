@@ -9,52 +9,100 @@ import { Notification as NotifyType } from "@/lib/types";
 import { toast } from "sonner";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 
 export default function NotificationPage() {
-  const [ notification, setNotification] = useState<NotifyType[] | null>(null);
+  const [ notification, setNotification] = useState< NotifyType[] | null>(null);
   const [ loading, setLoading] = useState< boolean>(false);
   const [ message, setMessage] = useState< string >('');
   const [ profile_id, setProfileId] = useState('');
-  const params = useParams();
  const router = useRouter();
+ const params = useParams();
 
 
 //current user id
  useEffect(()=>{
   const fetchNotifications= async () =>{
-
     setLoading(true);
- const profile_id =  params.profile_id as string;
- setProfileId(profile_id)
-   
- //fetching notifications
+    const profile_id =  params.profile_id as string;
+    setProfileId(profile_id)
+  
     try {
-      const { data , error:NotifyError}= await supabase
-      .from('notifications')
-      .select('  id, created_at,user_id,type,from_user_id,is_read,  profiles:profiles!notifications_from_user_id_fkey (name, avatar)')
-      .eq('user_id', profile_id)
-      .order('created_at', { ascending: false});
-
-//console.log(data);
-      if(NotifyError){
-        console.error('Error in fetching notification',NotifyError)
-      }
-      if(data?.length === 0){
-        setMessage('No matches yet')
+      const response = await fetch(`/api/notification?profile_id=${profile_id}`,{
+        headers: {
+          'Content-type' : 'application/json',
+        },
+      });
+      if(!response.ok){
+        const errorData = await response.json();
+        console.error("API error:", errorData);
+        setMessage(`Failed to load notifications: ${errorData.error}`);
+        return;
       }
 
-    
+      const data = await response.json();
+      //console.log(data)
+
+      if(data.length === 0){
+        setMessage('No matches yet');
+      }
+
       setNotification(data as NotifyType[]);
-      
     } catch (error) {
-      console.error('Error in processing request', error);
+      console.error('Fetch error from client side:',error);
+      setMessage("Error fetching notifications");
     } finally{
       setLoading(false);
     }
-  };
+
+ 
+//  //fetching notifications
+//     try {
+//       const { data , error:NotifyError}= await supabase
+//       .from('notifications')
+//       .select('  id, created_at,user_id,type,from_user_id,is_read,  profiles:profiles!notifications_from_user_id_fkey (name, avatar)')
+//       .eq('user_id', profile_id)
+//       .order('created_at', { ascending: false});
+
+// //console.log(data);
+//       if(NotifyError){
+//         console.error('Error in fetching notification',NotifyError)
+//       }
+//       if(data?.length === 0){
+//         setMessage('No matches yet')
+//       }
+
+    
+//       setNotification(data as NotifyType[]);
+      
+//     } catch (error) {
+//       console.error('Error in processing request', error);
+//     } finally{
+   
+//     }
+
+
+};
   fetchNotifications();
- },[]);
+
+  const subscription = supabase
+  .channel('notifications')
+  .on(
+    'postgres_changes',
+    { event: 'INSERT', schema: 'public', table: 'notifications' ,filter: `user_id=eq.${params.profile_id}`},
+    (payload)=>{
+      console.log('New notification:', payload.new);
+      setNotification((prev) => [payload.new as NotifyType, ...(prev || [])]);
+    }
+  )
+  .subscribe();
+
+  return ()=>{
+    supabase.removeChannel(subscription);
+  }
+ },[params]);
+//  console.log(notification)
 
  const handleAction = async (notificationId: string, action: 'accepted' | 'rejected')=>{
    try {
@@ -64,15 +112,17 @@ export default function NotificationPage() {
        return;
       }
       let match_id: string;
-    if(action === 'accepted'){
+    if(notif.type === 'like' && action === 'accepted'){
     const { data: existingMatch, error: matchCheckError} = await supabase
     .from('matches')
     .select('id')
-   // .or(`and(user1_id.eq.${profile_id},user2_id.eq.${notif.from_user_id}),and(user1_id.eq.${notif.from_user_id},user2_id.eq.${profile_id})`)
-    .maybeSingle();
+    .or(`and(user1_id.eq.${profile_id},user2_id.eq.${notif.from_user_id}),and(user1_id.eq.${notif.from_user_id},user2_id.eq.${profile_id})`)
+    .maybeSingle<{ id: string }>();
 
     if(existingMatch){
-      toast('Match is already created')
+      toast('Match is created redirecting to messages...')
+      router.push(`/messages`);
+      return;
     }
 
 
@@ -102,13 +152,37 @@ export default function NotificationPage() {
         return;
       }
 
-      const {error: updateError} = await supabase
+      const {error: notifyError} = await supabase
       .from('notifications')
-      .update({is_read: true})
+      .insert([
+        {
+          user_id: profile_id,
+        type: 'match',
+      from_user_id: notif.from_user_id,    
+    metadata: { match_id : match.id},
+    created_at: new Date().toISOString(),
+    },
+    {
+      user_id: notif.from_user_id,
+      type: 'match',
+      from_user_id: profile_id,
+      metadata: {match_id: match.id},
+      created_at: new Date().toISOString(),
+    }
+      ])
+
+      if(notifyError){
+        console.error('error in inserting match notificatoion:',notifyError.message);
+        toast('Match created ,but failed to send notification');
+      }
+
+      const { error: updateError} = await supabase
+      .from('notifications')
+      .update({ is_read: true})
       .eq('id',notificationId);
 
       if(updateError){
-        console.error('error marking notification as read:',updateError.message)
+        console.error('Error marking notification as read:',updateError.message);
       }
 
        match_id = match?.id;
@@ -129,13 +203,13 @@ export default function NotificationPage() {
        }
     
      }else{
-      match_id = existingMatch.id;
+     // match_id = existingMatch.id;
       console.log('profile already liked');
     }
     router.push(`/message`)
 
 ////////delete the request after rejection......
-    }else if(action === 'rejected'){
+    }else if(notif.type === 'like' && action === 'rejected'){
       //delete the user like
 
       const {error: deleteError } = await supabase
@@ -158,7 +232,7 @@ export default function NotificationPage() {
         console.error('error in deleting notification', updateError.message)
         return;
       }
-      
+      window.location.reload();
   }
 
 
@@ -175,52 +249,83 @@ export default function NotificationPage() {
     </div>
   );
 }
-  return (
-    <div className="p-4 sm:p-6 max-w-3xl mx-auto">
-      
-      <h1 className="text-2xl font-semibold mb-4 flex items-center gap-3">
-      <CircleArrowLeft size={26} onClick={()=>router.back()}/>
-        Notifications
-      </h1>
+ 
+return (
+  <div className="p-4 sm:p-6 max-w-3xl mx-auto">
+    <h1 className="text-2xl font-semibold mb-4 flex items-center gap-3">
+      <CircleArrowLeft size={26} onClick={() => router.back()} />
+      Notifications
+    </h1>
 
-      <div className="space-y-4">
-        {message && !loading && (<p className="text-center py-6 text-2xl text-red-600">{message}</p>)}
-        {notification?.map((notif) => (
-          <Card key={notif.id}>
-            <CardContent className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4">
-              <div className="flex items-center gap-4">
-                <img
-                  src={notif.profiles.avatar}
-                  alt='avatar'
-                  className="w-12 h-12 rounded-full object-cover"
-                />
-                <div>
-                  <p className="text-sm">
-                    <span className="font-bold ">{notif.profiles.name}</span><span className="pl-2 text-sm font-extralight">sent you a matching request</span>
-                  </p>
-                  <p className="text-xs text-gray-500">{formatDistanceToNow(parseISO(notif.created_at),{addSuffix: true})}</p>
-                </div>
+    <div className="space-y-4">
+      {message && !loading && (
+        <p className="text-center py-6 text-2xl text-red-600">{message}</p>
+      )}
+      {notification?.map((notif) => (
+        <Card key={notif.id}>
+          <CardContent className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4">
+            <div className="flex items-center gap-4">
+              <img
+                src={notif.profiles?.avatar || '/default-avatar.png'}
+                alt="avatar"
+                className="w-12 h-12 rounded-full object-cover"
+              />
+              <div>
+                {notif.type === 'like' && (
+                  <>
+                    <p className="text-sm">
+                      <span className="font-bold">{notif.profiles?.name || 'Unknown'}</span>
+                      <span className="pl-2 text-sm font-extralight">sent you a matching request</span>
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {formatDistanceToNow(parseISO(notif.created_at), { addSuffix: true })}
+                    </p>
+                  </>
+                )}
+                {notif.type === 'match' && (
+                  <>
+                    <p className="text-sm">
+                      <span className="font-bold">{notif.profiles?.name || 'Unknown'}</span>
+                      <span className="pl-2 text-sm font-extralight">matched with you!</span>
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {formatDistanceToNow(parseISO(notif.created_at), { addSuffix: true })}
+                    </p>
+                  </>
+                )}
+              
               </div>
+            </div>
 
-              <div className="flex gap-2">
-                <Button
-                  className="bg-green-500 hover:bg-green-600 text-white"
-                onClick={()=> handleAction(notif.id, 'accepted')}
-                >
-                Accept
-                </Button>
-                <Button
-                  className="bg-red-500 hover:bg-red-600 text-white"
-                  onClick={() => handleAction(notif.id, "rejected")}
-             
-                >
-                  Reject
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+            <div className="flex gap-2">
+              {notif.type === 'like' && !notif.is_read && (
+                <>
+                  <Button
+                    className="bg-green-500 hover:bg-green-600 text-white"
+                    onClick={() => handleAction(notif.id, 'accepted')}
+                  >
+                    Accept
+                  </Button>
+                  <Button
+                    className="bg-red-500 hover:bg-red-600 text-white"
+                    onClick={() => handleAction(notif.id, 'rejected')}
+                  >
+                    Reject
+                  </Button>
+                </>
+              )}
+              {notif.type === 'match' && (
+                <Link href={`/message`}>
+                  <Button variant="outline">View Chat</Button>
+                </Link>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      ))}
     </div>
-  );
+  </div>
+);
+ 
 }
+   
