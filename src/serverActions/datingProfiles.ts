@@ -6,6 +6,7 @@ export const fetchedProfiles= async ():Promise<profiles[]>=>{
     
 try {
   const profileId = localStorage.getItem('profileId')
+  console.log(profileId)
    
         const { data, error} = await supabase
         .from('profiles')

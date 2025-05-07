@@ -101,7 +101,7 @@ export default function ChatListPage() {
 
   return (
  <AppLayout>
-    <div className="p-4 sm:p-6 max-w-3xl mx-auto">
+    <div className="p-4 sm:p-6 max-w-3xl mx-auto select-none">
       <h1 className="text-2xl font-semibold mb-4">Messages</h1>
       {matches.length === 0 ? (
         <p className="text-center text-gray-500">No conversations yet</p>
@@ -109,7 +109,7 @@ export default function ChatListPage() {
         <div className="space-y-4">
           {matches.map((match) => (
             <Link href={`/message/${match.id}`} key={match.id}>
-              <Card className="hover:bg-gray-100 transition">
+              <Card className="hover:bg-gray-200 hover:text-black transition overflow-hidden">
                 <CardContent className="flex items-center gap-4 p-4">
                   {match.otherUser.avatar ? (
                     <img

@@ -19,9 +19,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const fetchuserId = async () => {
       const user = await userdata();
      // console.log(user);
-      const profileid = user?.profileId
+     const profileid = user?.profileId?.[0]?.id || ''; // Extract the first id or use an empty string
      // console.log(profileid)
-     localStorage.setItem('profileId',profileid)
+     localStorage.setItem('profileId', profileid);
       setProfileId(profileid);
     };
     fetchuserId();

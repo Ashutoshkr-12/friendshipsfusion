@@ -1,7 +1,7 @@
 
 
 export type profiles = {
-    id: string;
+    id: string ;
     name: string;
     age: number;
     bio: string;
@@ -14,6 +14,31 @@ export type profiles = {
     interests: string[];
     
   } 
+
+export type rentalRequest = {
+  id: string;
+  created_at: string;
+  user_id: string;
+  rentalprofile_id: string;
+  metadata: {booking_id: string};
+  status: boolean;
+  services: string[];
+  when: string;
+  duration: Number;
+  message: string;
+  profiles: any;
+
+}
+
+export type Review ={
+  id: string;
+  rentalprofile_id: string;
+  user_id: string;
+  rating: number;
+  created_at: string;
+  comment: string;
+  profiles:any;
+}
 
 export type Notification = {
   id: string;
@@ -29,7 +54,7 @@ export type Notification = {
 //     avatar: string   
 // }                        
 }
-  
+ 
 
 export interface Message {
   id: string;

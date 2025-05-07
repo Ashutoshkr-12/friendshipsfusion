@@ -10,8 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
-import { toast } from 'sonner';
-
 
 interface RentalGridProps {
   profiles: RentalProfile[];
@@ -20,7 +18,7 @@ interface RentalGridProps {
 const RentalGrid: React.FC<RentalGridProps> = ({ profiles }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [maxPrice, setMaxPrice] = useState(100);
+  const [maxPrice, setMaxPrice] = useState(50);
   // const { toast } = useToast();
 
   const categories = [
@@ -31,18 +29,14 @@ const RentalGrid: React.FC<RentalGridProps> = ({ profiles }) => {
     { value: 'travel', label: 'Travel Buddy' },
   ];
 
-  const handleRent = (profile: RentalProfile) => {
-    toast( 'Request Sent!',{
-      description: `Your request to rent ${profile.name} has been sent.`,
-    });
-  };
+
 
   const filteredProfiles = profiles.filter(profile => {
     const matchesSearch = profile.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          profile.services.some(service => service.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesCategory = selectedCategory === 'all' || 
                           profile.services.some(service => service.toLowerCase().includes(selectedCategory.toLowerCase()));
-    const matchesPrice = profile.hourlyRate <= maxPrice;
+    const matchesPrice = profile.hourly_rent <= maxPrice;
     
     return matchesSearch && matchesCategory && matchesPrice;
   });
@@ -90,13 +84,13 @@ const RentalGrid: React.FC<RentalGridProps> = ({ profiles }) => {
                 <div className="flex items-center justify-between">
                   <span className="text-sm">$0</span>
                   <span className="text-sm font-medium">${maxPrice}</span>
-                  <span className="text-sm">$100+</span>
+                  <span className="text-sm">$50+</span>
                 </div>
                 <Slider
                   value={[maxPrice]}
                   min={0}
-                  max={100}
-                  step={5}
+                  max={50}
+                  step={2}
                   onValueChange={(value) => setMaxPrice(value[0])}
                 />
               </div>
@@ -112,22 +106,22 @@ const RentalGrid: React.FC<RentalGridProps> = ({ profiles }) => {
                 </div>
               </div>
             </div>
-            <div className="flex justify-between">
+            {/* <div className="flex justify-between">
               <Button variant="outline">Reset</Button>
-              <Button>Apply Filters</Button>
-            </div>
+              <Button >Apply Filters</Button>
+            </div> */}
           </DialogContent>
         </Dialog>
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* {filteredProfiles.map((profile) => (
+        {filteredProfiles.map((profile) => (
           <RentalCard 
             key={profile.id} 
             profile={profile} 
-            onRent={handleRent}
+               
           />
-        ))} */}
+        ))}
       </div>
       
       {filteredProfiles.length === 0 && (

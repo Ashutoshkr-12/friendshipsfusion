@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
-import { ChevronLeft } from 'lucide-react';
+import { Camera, ChevronLeft } from 'lucide-react';
 
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/utils/supabase/supabase';
@@ -12,6 +12,8 @@ import { formatDistanceToNow, parseISO } from 'date-fns';
 import { messageProfile, Message } from '@/lib/types';
 import AppLayout from '@/components/AppLayout/applayout';
 import { toast } from 'sonner';
+import { currentUserProfile } from '@/mockdata/data';
+import { Label } from '@/components/ui/label';
 
 
 export default function ChatPage() {
@@ -19,19 +21,21 @@ export default function ChatPage() {
   const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([]);
   const [otherUser, setOtherUser] = useState<messageProfile | null>(null);
-  const [newMessage, setNewMessage] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [newMessage, setNewMessage] = useState< string >('');
+  const [imageFile, setImageFile] = useState< File | null>(null);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>( null );
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
- // const { profileId } = useUser(); //delaying the task so just saved the profileId in localStorage.
+ //const { profileId } = useUser(); //delaying the task so just saved the profileId in localStorage.
  
-   const profileId =  localStorage.getItem('profileId')
+  const profileId =  localStorage.getItem('profileId')
    
   const matchId = params.match_id as string;
   useEffect(() => {
@@ -52,6 +56,7 @@ export default function ChatPage() {
 
     const fetchData = async () => {
       try {
+        setLoading(true);
        // console.log('Fetching match for matchId:', matchId);
         const { data: match, error: matchError } = await supabase
           .from('matches')
@@ -62,7 +67,7 @@ export default function ChatPage() {
         if (matchError || !match) {
           console.error('Error fetching match:', matchError?.message);
           setError('Match not found');
-          setLoading(false);
+      
           return;
         }
         // console.log(match.user1_id)
@@ -72,10 +77,10 @@ export default function ChatPage() {
         if (match.user1_id !== profileId && match.user2_id !== profileId) {
           console.error('Unauthorized access: profileId not in match');
           setError('Unauthorized access to match');
-          setLoading(false);
           return;
         }
-
+        
+        setLoading(false);
         const otherUserId = match.user1_id === profileId ? match.user2_id : match.user1_id;
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
@@ -143,8 +148,14 @@ export default function ChatPage() {
     };
   }, [matchId]);
 
+  const isImageUrl = (content: string): boolean => {
+    //check if content is a url from the chat-images bucket
+    const regex = /^https:\/\/[a-zA-Z0-9-]+\.supabase\.co\/storage\/v1\/object\/public\/chat-images\/.+$/;
+  return regex.test(content);
+  };
+
   const handleSendMessage = async () => {
-    if (!newMessage.trim()) {
+    if (!newMessage.trim() && !imageFile) {
       toast('Message cannot be empty');
       return;
     }
@@ -162,13 +173,37 @@ export default function ChatPage() {
       //   sender_id: profileId,
       //   content: newMessage.trim(),
       // });
+      let content: string;
+
+      //upload image if selected
+      if(imageFile){
+        const fileExt = imageFile.name.split('.').pop();
+        const fileName = `${currentUserProfile.id}_${Date.now()}.${fileExt}`;
+        const { error: uploadError} = await supabase.storage
+        .from('chat-images')
+        .upload(fileName, imageFile);
+
+        if(uploadError){
+          console.error('Image upload error:', uploadError.message);
+          toast('Failed to upload image')
+          return;
+        }
+
+        const { data: urlData }= supabase.storage
+        .from('chat-images')
+        .getPublicUrl(fileName);
+
+        content = urlData.publicUrl;
+      }else{
+        content = newMessage;
+      }
 
       const { error } = await supabase
         .from('messages')
         .insert({
           match_id: matchId,
           sender_id: profileId,
-          content: newMessage.trim(),
+          content,
           created_at: new Date().toISOString(),
         });
 
@@ -181,11 +216,26 @@ export default function ChatPage() {
 
       //console.log('Message inserted successfully:', messageId);
       setNewMessage('');
+      setImageFile(null);
+      if(fileInputRef.current){
+        fileInputRef.current.value = ''
+      }
       setIsSending(false);
     } catch (err) {
       console.error('Send error:', err);
       setError('Error sending message');
       setIsSending(false);
+    }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>)=>{
+    const file = e.target.files?.[0]
+    if(file){
+      if(file.size > 5*1024 * 1024){
+        toast('Image size must be less that 5MB');
+        return;
+      }
+      setImageFile(file);
     }
   };
 
@@ -225,29 +275,45 @@ export default function ChatPage() {
           >
             {otherUser.name?.[0]?.toUpperCase() || 'U'}
           </div>
+          <div>
           <h1 className="text-xl font-semibold">{otherUser.name || 'User'}</h1>
+          <p className='text-xs text-gray-400 tracking-tight'>All the messages will be automatically deleted within 24hrs for security purposes.</p>
+        </div>
         </div>
       )}
 
       <Card className="mb-4">
-        <CardContent className="p-4 max-h-[60vh] overflow-y-auto">
+      <CardContent className="p-4 h-[50vh] overflow-y-auto flex flex-col gap-4">
           {messages.length === 0 ? (
-            <p className="text-center text-gray-500">No messages yet</p>
+            <p className="text-center text-gray-500">No messages yet. Start the conversation!</p>
           ) : (
             messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`mb-2 flex ${msg.sender_id === profileId ? 'justify-end' : 'justify-start'}`}
+                className={`flex ${
+                  msg.sender_id === profileId ? 'justify-end' : 'justify-start'
+                }`}
               >
                 <div
-                  className={`max-w-[70%] rounded-lg p-2 ${
+                  className={`max-w-[70%] p-3 rounded-lg ${
                     msg.sender_id === profileId
                       ? 'bg-blue-500 text-white'
                       : 'bg-gray-200 text-black'
                   }`}
                 >
-                  <p>{msg.content}</p>
-                  <p className="text-xs opacity-70 mt-1">
+                  
+                  {isImageUrl(msg.content) ? (
+                    <img
+                      src={msg.content}
+                      alt="Chat image"
+                      width={200}
+                      height={200}
+                      className="mt-2 rounded-lg max-w-full"
+                    />
+                  ) : (
+                    <p className="mt-1">{msg.content}</p>
+                  )}
+                  <p className="text-xs text-gray-800 mt-1">
                     {formatDistanceToNow(parseISO(msg.created_at), { addSuffix: true })}
                   </p>
                 </div>
@@ -258,13 +324,24 @@ export default function ChatPage() {
         </CardContent>
       </Card>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 bg-gray-900 py-2 px-2 rounded-md ">
         <Input
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type a message..."
           onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
         />
+        <Input type='file'
+        accept='image/*'
+        onChange={handleImageChange}
+        ref={fileInputRef}
+        className='hidden'
+        id='image-upload'/>
+          <Label htmlFor='image-upload'>
+        <Camera size={34} />
+        </Label>
+        {imageFile && <span className='text-sm text-geay-500'>{imageFile.name}</span>}
+       
         <Button onClick={handleSendMessage} className="bg-blue-500 hover:bg-blue-600">
           <Send className="w-5 h-5" />
         </Button>

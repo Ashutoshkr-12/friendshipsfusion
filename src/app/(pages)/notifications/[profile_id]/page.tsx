@@ -103,6 +103,7 @@ export default function NotificationPage() {
   }
  },[params]);
 //  console.log(notification)
+// console.log(profile_id);
 
  const handleAction = async (notificationId: string, action: 'accepted' | 'rejected')=>{
    try {
@@ -112,7 +113,7 @@ export default function NotificationPage() {
        return;
       }
       let match_id: string;
-    if(notif.type === 'like' && action === 'accepted'){
+    if(action === 'accepted'){
     const { data: existingMatch, error: matchCheckError} = await supabase
     .from('matches')
     .select('id')
@@ -121,7 +122,7 @@ export default function NotificationPage() {
 
     if(existingMatch){
       toast('Match is created redirecting to messages...')
-      router.push(`/messages`);
+      router.push(`/message`);
       return;
     }
 
@@ -140,6 +141,7 @@ export default function NotificationPage() {
         user2_id:  profile_id,   // here userid is the user who liked me back
         user1_id: notif.from_user_id,    //here notif.from_user_id is mee
         created_at: new Date().toISOString(),
+        type: 'match',
       })
       .select('id')
       .single();
@@ -154,22 +156,13 @@ export default function NotificationPage() {
 
       const {error: notifyError} = await supabase
       .from('notifications')
-      .insert([
-        {
-          user_id: profile_id,
-        type: 'match',
-      from_user_id: notif.from_user_id,    
-    metadata: { match_id : match.id},
-    created_at: new Date().toISOString(),
-    },
-    {
+      .insert({
       user_id: notif.from_user_id,
       type: 'match',
       from_user_id: profile_id,
       metadata: {match_id: match.id},
       created_at: new Date().toISOString(),
-    }
-      ])
+    })
 
       if(notifyError){
         console.error('error in inserting match notificatoion:',notifyError.message);
@@ -180,14 +173,16 @@ export default function NotificationPage() {
       .from('notifications')
       .update({ is_read: true})
       .eq('id',notificationId);
+      // console.log(notificationId);
 
       if(updateError){
         console.error('Error marking notification as read:',updateError.message);
       }
+      toast('Its a match')
 
        match_id = match?.id;
        console.log(match_id)
-    
+       
        const {error: messageError} = await supabase
        .from('messages')
        .insert({
@@ -237,7 +232,7 @@ export default function NotificationPage() {
 
 
 }catch (error) {
-    
+    console.error('Error in notification function:',error);
   }
  }
 
@@ -274,8 +269,7 @@ return (
                 {notif.type === 'like' && (
                   <>
                     <p className="text-sm">
-                      <span className="font-bold">{notif.profiles?.name || 'Unknown'}</span>
-                      <span className="pl-2 text-sm font-extralight">sent you a matching request</span>
+                      <span className="pl-2 text-sm font-semibold">{`${notif.profiles?.name || 'Unknown'} sent you a match request – feeling the vibe? 👀`}</span>
                     </p>
                     <p className="text-xs text-gray-500">
                       {formatDistanceToNow(parseISO(notif.created_at), { addSuffix: true })}
@@ -286,11 +280,47 @@ return (
                   <>
                     <p className="text-sm">
                       <span className="font-bold">{notif.profiles?.name || 'Unknown'}</span>
-                      <span className="pl-2 text-sm font-extralight">matched with you!</span>
+                      <span className="pl-2 text-sm font-extralight"> said yes! Go say hey 👋</span>
                     </p>
                     <p className="text-xs text-gray-500">
                       {formatDistanceToNow(parseISO(notif.created_at), { addSuffix: true })}
                     </p>
+                  </>
+                )}
+               
+                {notif.type === 'booking_request' && !notif.is_read &&(
+                  <>
+                  <div className="flex items-center gap-2 sm:gap-6">
+                    <div>
+                    <p className="text-sm">
+                      <span className="pl-2 text-lg font-extralight">{`${notif.profiles?.name || 'Someone'} wants to rent your time - check their request!`}</span>
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {formatDistanceToNow(parseISO(notif.created_at), { addSuffix: true })}
+                    </p>
+                    </div>
+                    <Link href={`/rent-a-friend/booking-request/${profile_id}`}>
+                    <Button>See request</Button>
+                    </Link>
+                    </div>
+                  </>
+                )}
+                {notif.type === 'booked' && (
+                  <>
+                  <div className="flex items-center gap-2 sm:gap-20">
+                  <div>
+                    <p className="text-sm">
+                      <span className="font-bold">{notif.profiles?.name || 'Unknown'}</span>
+                      <span className="pl-2 text-sm font-extralight">{`is in! Let the hangout begin 🎉`}</span>
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {formatDistanceToNow(parseISO(notif.created_at), { addSuffix: true })}
+                    </p>
+                    </div>
+                    <Link href={`/message`}>
+                    <Button>View chat</Button>
+                    </Link>
+                    </div>
                   </>
                 )}
               

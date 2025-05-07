@@ -1,40 +1,33 @@
 'use server'
-import { createClient } from '@/utils/supabase/server';
-//import { supabase } from '@/utils/supabase/supabase';
-
+import { getUsersession } from '@/serverActions/authAction';
+import { supabase } from '@/utils/supabase/supabase';
 
  const userdata=async()=> {
- const supabase = await createClient();
   try {
-    const { data , error } = await supabase.auth.getUser();
+    const data = await getUsersession();
     //console.log('Supabase session data:',data); // Log the session data
-
    
-    if (error) {
-      console.error('Error fetching session:', error);
-      return null; // Return null if no session is found
-    }
-    const users = data.user
-   //console.log(users);
+    // if (error) {
+    //   console.error('Error fetching session:', error);
+    //   return null; // Return null if no session is found
+    // }
+    const users = data?.user
+     //console.log(users);
 
-   const { data: profileid , error: idError} = await supabase
-   .from('profiles')
-   .select('id')
-   .eq('user_id',users.id)
-   .single();
+     const { data: profile, error} = await supabase
+     .from('profiles')
+     .select('id')
+     .eq('user_id',users?.id)
 
-   //console.log(profileid)
-   if(idError){
-    console.error('Error in Fetching ID in userdata',idError)
-    return null;
-   }
-   const profileId = profileid?.id || null;
-   
+     if(error){
+      console.error('Error in profile id Fetching')
+     }
 
+     console.log(profile)
     return {
-      profileId,
-      email: users?.email,
-      userId: users?.id, // Access the `id` from the session user object
+      profileId: profile,
+    email: users?.email,
+    userId: users?.id // Access the `id` from the session user object
     };
    
   } catch (err) {

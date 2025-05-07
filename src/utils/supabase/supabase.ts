@@ -10,8 +10,15 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 export const supabase = createClient(
     supabaseUrl,
-    supabaseAnonKey,
-  
+    supabaseAnonKey,{
+      auth: {
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true,
+        storage: typeof window !== 'undefined' ? localStorage: undefined,
+        storageKey: 'sb-qgbqyrnvwqubbutwjzcf-auth-token'
+      }
+    }
 );
 
 export const ensureStorageBucket = async (bucketName: string) => {

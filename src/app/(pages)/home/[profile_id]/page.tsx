@@ -6,12 +6,11 @@ import { profiles } from '@/lib/types';
 import { toast } from 'sonner';
 import { Heart, Bell } from 'lucide-react';
 import { supabase } from '@/utils/supabase/supabase';
-import { fetchedProfiles } from '@/serverActions/datingProfiles';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
 const Index = () => {
-  const [profile, setProfiles] = useState<profiles[]>([]);
+  const [profile, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
 //  const [ message, setMessage] = useState('');
   const [profile_Id, setProfileid] = useState<string | undefined>();
@@ -29,9 +28,13 @@ const Index = () => {
   // Fetch users profiles
 
   useEffect(() => {
-    async function loadProfiles() {
-      const data: profiles[] = await fetchedProfiles();  // Data from serverAction
-      setProfiles(data);
+    const loadProfiles = async() => {
+      const res = await fetch(`/api/datingprofile`) // Data from serverAction
+      const data = await res.json();
+      if (data.profiles) {
+        setProfiles(data.profiles);
+
+      }
       setLoading(false);
     }
     loadProfiles();
@@ -84,29 +87,31 @@ const Index = () => {
       created_at: new Date().toISOString(),
     }); 
 
-
     if(notifyError){
-      console.error('Error sending notification:', notifyError.message);
+      console.error('Error sending notification:', notifyError);
     }
-
+    if(notifyError?.code === '23505'){
+      toast('Profile already liked!!!')
+    }else{
+      if (2>0) {
+        setTimeout(() => {
+          toast.custom(() => (
+            <div className="flex  items-center gap-3 bg-black px-2 py-1 rounded-lg">
+              <div className="flex items-center gap-2">
+                <Heart className="text-pink-500 fill-pink-500" size={18} />
+              </div>
+              <p>
+              You reached out! Fingers crossed 🤞
+              </p>
+            </div>
+          ));
+        }, 100);
+      }
+    };
+    }
     
     // Simulate a match 50% of the time
-    if (Math.random() > 0.1) {
-      setTimeout(() => {
-        toast.custom(() => (
-          <div className="flex flex-col items-start gap-2">
-            <div className="flex items-center gap-2">
-              <Heart className="text-pink-500 fill-pink-500" size={18} />
-            </div>
-            <p>
-              Matching request has been sent to {profile.name}. Now wait for {profile.name} to like
-              you back!
-            </p>
-          </div>
-        ));
-      }, 100);
-    }
-  };
+   
 
  
   return (
@@ -116,10 +121,14 @@ const Index = () => {
           <h1 className="text-2xl font-bold mb-6 text-center md:text-left">
             Find Your Match
           </h1>
-          <div className='relative bg-green-500 w-10 h-10 flex items-center p-1 '>
+          <div className='relative w-10 h-10 flex items-center justify-center'>
             <Link href={`/notifications/${profile_Id}`}>
-            <Bell size={30} className="mr-4 cursor-pointer"/>
-           <span className='absolute  h-4 w-4 rounded-full  text-red-600 bg-red-600'></span>
+            <Bell size={30} className="w-6 h-6 text-gray-700 cursor-pointer"/>
+          {2>0 && (
+            <span className='absolute top-0 right-0 w-5 h-5 inline-flex items-center justify-center px-1.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full'>
+             
+            </span>
+          )}
           </Link> 
           </div>
 

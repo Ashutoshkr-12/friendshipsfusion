@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, useMotionValue, useTransform, useAnimationControls } from 'framer-motion';
 import SwipeCard from '@/components/dating/swipeCard';
 import { profiles } from '@/lib/types';
