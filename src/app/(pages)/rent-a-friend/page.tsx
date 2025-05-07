@@ -39,27 +39,31 @@ const Rent = () => {
   // checking if current user has a rental profile
  useEffect(()=>{
    const checkRentalprofile= async()=>{
-    const { data: profile, error} = await supabase
-    .from('rental_profiles')
-    .select('name,age,location,hourly_rent,availability')
-    .eq('profile_id', profileId)
-    .single();
-
-    if(error){
-      console.error('error in fetching rental profile in rent-a-freiend page:', error.message)
-    };
-    if(profile){
-      setCurrentUser(profile);
-      setMember(true);
-    }else{
-      setMember(false)
-    }
+  try {
+      const { data: profile, error} = await supabase
+      .from('rental_profiles')
+      .select('name,age,location,hourly_rent,availability')
+      .eq('profile_id', profileId)
+      .maybeSingle();
+  
+      if(error){
+        console.error('Error in fetching rental profile in rent-a-freiend page:', error.message)
+      }
+      if(error?.code === 'PGRST116'){
+        return null;
+      }
+      if(profile){
+        setCurrentUser(profile);
+        setMember(true);
+      }else{
+        setMember(false)
+      }
+  } catch (error) {
+    console.error('Error in fetching Profiles:',error)
+  }
    };
 
-   if(profileId){
     checkRentalprofile();
-   }
-
   },[ profileId])
 
   //fetching rental user profile 

@@ -64,7 +64,7 @@ const SwipeDeck: React.FC<SwipeDeckProps> = ({ profile, onSwipeLeft, onSwipeRigh
       controls.set({ x: 0, opacity: 1 });
     }
 
-    if (!currentProfile ) {
+    if (profile.length === 0) {
       return (
         <div className="flex flex-col items-center justify-center h-[70vh]">
           <h2 className="text-2xl font-bold mb-4">No more profiles to show!</h2>

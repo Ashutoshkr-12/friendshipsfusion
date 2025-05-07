@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { formatDistanceToNow, parseISO } from "date-fns";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Calendar, SquarePen, Star } from "lucide-react";
@@ -12,21 +13,22 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { useUser } from "@/hooks/profileIdContext";
 import { supabase } from "@/utils/supabase/supabase";
 import { Review } from "@/lib/types";
 
-export default function Reviewpage({ rental_id,data }: { rental_id: string ; data: Review[] }) {
+export default function Reviewpage({
+  rental_id,
+  data,
+}: {
+  rental_id: string;
+  data: Review[];
+}) {
   const [open, setOpen] = useState(false);
   const { profileId } = useUser();
   const [review, setReview] = useState<string>();
   const [rating, setRating] = useState<number>(0);
   const [hover, setHover] = useState(0);
-  
-  const filledStars = Math.floor(rating);
-  const emptyStars = 5 - filledStars;
 
   //stars
   const handleClick = (value: number) => {
@@ -38,7 +40,7 @@ export default function Reviewpage({ rental_id,data }: { rental_id: string ; dat
   const handleReview = async () => {
     //console.log(review, rating);
     try {
-      const {  error: reviewInsertError } = await supabase
+      const { error: reviewInsertError } = await supabase
         .from("reviews")
         .insert({
           rentalprofile_id: rental_id,
@@ -50,15 +52,11 @@ export default function Reviewpage({ rental_id,data }: { rental_id: string ; dat
       if (reviewInsertError) {
         console.error("error in inserting review:", reviewInsertError.message);
       }
-
-      // retrieve reviews
-  
     } catch (error) {
       console.error("Error in review insertion:", error);
     }
     setOpen(false);
   };
- 
 
   return (
     <Card className="mt-6 ">
@@ -124,7 +122,7 @@ export default function Reviewpage({ rental_id,data }: { rental_id: string ; dat
             </>
           ) : (
             <>
-              {/* {data.map((data, index) => (
+              {data.map((data, index) => (
                 <div key={index} className="p-4 border rounded-lg">
                   <div className="flex items-center gap-3 mb-2">
                     <Avatar className="h-10 w-10">
@@ -132,20 +130,30 @@ export default function Reviewpage({ rental_id,data }: { rental_id: string ; dat
                     </Avatar>
                     <div>
                       <div className="font-medium">{data.profiles.name}</div>
-                      <div className="text-sm text-gray-500"></div>
+                      <div className="text-sm text-gray-500">
+                        <Calendar size={14} className="inline mr-1" />
+                        {formatDistanceToNow(parseISO(data.created_at), {
+                          addSuffix: true,
+                        })}
+                      </div>
                     </div>
                     <div className="ml-auto flex items-center">
-                    {[...Array(filledStars)].map((_, i) => (
-        <Star key={`filled-${i}`} size={20} className="fill-yellow-500 text-yellow-500" />
-      ))}
-      {[...Array(emptyStars)].map((_, i) => (
-        <Star key={`empty-${i}`} size={20} className="text-gray-300" />
-      ))}
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          size={20}
+                          className={`${
+                            i < data.rating
+                              ? "fill-yellow-500 text-yellow-500"
+                              : "text-gray-300"
+                          }`}
+                        />
+                      ))}
                     </div>
                   </div>
-                  <p className="text-gray-700">{data.comment}</p>
+                  <p className="text-gray-300 px-2 text-md">{data.comment}</p>
                 </div>
-              ))} */}
+              ))}
             </>
           )}
         </div>

@@ -112,8 +112,6 @@ const handleAction = async (requestedId: string, action: 'accepted' | 'rejected'
                 console.log(match_id);
                 if(matchError){
                     console.error('Error in creating bookking match:', matchError.message);
-                 
-                    return;
                 }
 
                 const { error: notifyError} = await supabase

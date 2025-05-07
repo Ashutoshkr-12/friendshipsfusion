@@ -45,7 +45,7 @@ export default function NotificationPage() {
       //console.log(data)
 
       if(data.length === 0){
-        setMessage('No matches yet');
+        setMessage('No new notifications');
       }
 
       setNotification(data as NotifyType[]);

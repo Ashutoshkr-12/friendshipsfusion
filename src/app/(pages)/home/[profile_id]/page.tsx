@@ -29,7 +29,19 @@ const Index = () => {
 
   useEffect(() => {
     const loadProfiles = async() => {
-      const res = await fetch(`/api/datingprofile`) // Data from serverAction
+      const res = await fetch(`/api/datingprofile?profile_Id=${params.profile_id}`,{
+        headers: {
+          'Content-type' : 'application/json'
+        },
+      });
+
+      if(!res.ok){
+        const errorData = await res.json();
+        console.error("API error:",errorData);
+        return;
+      }
+      
+      // Data from serverAction
       const data = await res.json();
       if (data.profiles) {
         setProfiles(data.profiles);
@@ -111,6 +123,14 @@ const Index = () => {
     }
     
     // Simulate a match 50% of the time
+    if (!profile ) {
+      return (
+        <div className="flex flex-col items-center justify-center h-[70vh]">
+          <h2 className="text-2xl font-bold mb-4">No profiles to show!</h2>
+          <p className="text-gray-500 mb-4">Check back later for more matches</p>
+        </div>
+      );
+    }
    
 
  

@@ -1,19 +1,24 @@
-import { userdata } from "@/hooks/userdata";
 import { supabase } from "@/utils/supabase/supabase";
 import { NextResponse } from "next/server";
 
-export async function GET(){
+export async function GET(request: Request){
 
-    const user = await userdata();
-    const profileId = user?.profileId;
-    console.log(profileId)
-    const { data, error} = await supabase
-    .from('profiles')
-    .select('*')
-    //.neq('id',profileId);
+ try {
+    const { searchParams } = new URL(request.url);
+    const profileId = searchParams.get('profile_Id')
+       
+       console.log(profileId)
+       const { data, error} = await supabase
+       .from('profiles')
+       .select('*')
+       .neq('id',profileId);
+   
+       if(error){
+           return NextResponse.json({ error: error.message}, {status: 500})
+       }
+       return NextResponse.json({ profiles: data}, { status:200})
 
-    if(error){
-        return NextResponse.json({ error: error.message}, {status: 500})
-    }
-    return NextResponse.json({ profiles: data}, { status:200})
+ } catch (error) {
+    return NextResponse.json({ message: 'Error in fetching profiles'})
+ }
 }
