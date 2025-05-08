@@ -56,31 +56,7 @@ export default function NotificationPage() {
       setLoading(false);
     }
 
- 
-//  //fetching notifications
-//     try {
-//       const { data , error:NotifyError}= await supabase
-//       .from('notifications')
-//       .select('  id, created_at,user_id,type,from_user_id,is_read,  profiles:profiles!notifications_from_user_id_fkey (name, avatar)')
-//       .eq('user_id', profile_id)
-//       .order('created_at', { ascending: false});
 
-// //console.log(data);
-//       if(NotifyError){
-//         console.error('Error in fetching notification',NotifyError)
-//       }
-//       if(data?.length === 0){
-//         setMessage('No matches yet')
-//       }
-
-    
-//       setNotification(data as NotifyType[]);
-      
-//     } catch (error) {
-//       console.error('Error in processing request', error);
-//     } finally{
-   
-//     }
 
 
 };
