@@ -56,7 +56,10 @@ export default function NotificationPage() {
       setLoading(false);
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> fe0288c6c2ab2fafa3d600c9080f9813ec20619c
 
 
 };
