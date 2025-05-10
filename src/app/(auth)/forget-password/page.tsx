@@ -1,3 +1,4 @@
+'use client'
 import Link from 'next/link';
 import { createClient } from '@/utils/supabase/server';
 import { redirect, useSearchParams } from 'next/navigation';
