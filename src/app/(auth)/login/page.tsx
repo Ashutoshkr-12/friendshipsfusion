@@ -168,7 +168,7 @@ export default function ProfileForm() {
             <p className=" text-center  text-md text-gray-900">
               forget password?
               <Link
-                href={"/forgot-password"}
+                href={"/forget-password"}
                 className="font-semibold text-indigo-800 hover:text-zinc-900 ml-2"
               >
                 forget password

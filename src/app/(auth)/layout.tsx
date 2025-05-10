@@ -10,7 +10,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
   const pathname = usePathname();
 
   useEffect(() => {
-    if (profileId && (pathname === '/login' || pathname === '/signup' || pathname === '/forget-password')) {
+    if (profileId && (pathname === '/login' || pathname === '/signup' || pathname === '/forget-password' || pathname === '/reset-password')) {
       router.push(`/home/${profileId}`);
     }
   }, [profileId, pathname, router]);
