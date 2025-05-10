@@ -1,7 +1,6 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
 import { Camera, ChevronLeft } from 'lucide-react';
-
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/utils/supabase/supabase';
 import { Input } from '@/components/ui/input';
@@ -12,14 +11,16 @@ import { formatDistanceToNow, parseISO } from 'date-fns';
 import { messageProfile, Message } from '@/lib/types';
 import AppLayout from '@/components/AppLayout/applayout';
 import { toast } from 'sonner';
-import { currentUserProfile } from '@/mockdata/data';
 import { Label } from '@/components/ui/label';
+import { useUser } from '@/hooks/profileIdContext';
+import { RouteLoader } from '@/components/ui/routerLoader';
 
 
 export default function ChatPage() {
   const params = useParams();
   const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isPremium , setIsPremium] = useState< boolean >(false);
   const [otherUser, setOtherUser] = useState<messageProfile | null>(null);
   const [newMessage, setNewMessage] = useState< string >('');
   const [imageFile, setImageFile] = useState< File | null>(null);
@@ -33,20 +34,42 @@ export default function ChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
- //const { profileId } = useUser(); //delaying the task so just saved the profileId in localStorage.
+  //const profileId =  localStorage.getItem('profileId')  not a professional approach
+ const { profileId } = useUser();
  
-  const profileId =  localStorage.getItem('profileId')
-   
+ //fetchin premium status
+ useEffect(()=>{
+  try {
+      const fetchUserstatus = async()=>{
+         if(profileId){
+        const { data , error} = await supabase
+        .from('profiles')
+        .select('premium_status')
+        .eq('id',profileId)
+        .single();
+
+        if(error){
+          console.error('Error in fetching userStatus in message:',error.message);
+        }
+      if(data?.premium_status){
+        setIsPremium(true);
+      }
+      }
+    }    
+  fetchUserstatus();
+  } catch (error) {
+    console.error('Unexpected error in fetching premium status in message:',error);
+  }
+ },[profileId]);
+
+ console.log(isPremium)
   const matchId = params.match_id as string;
   useEffect(() => {
-
     // Perform checks outside fetchData to avoid hook issues
     if (profileId === null) {
       console.log('fetching ProfileId waiting for UserProvider');
-     
       return;
     }
-
     if (!matchId) {
       setError('Missing match ID');
       setLoading(false);
@@ -55,8 +78,10 @@ export default function ChatPage() {
     }
 
     const fetchData = async () => {
-      try {
+      if(profileId){
+          try {
         setLoading(true);
+        //console.log(profileId);
        // console.log('Fetching match for matchId:', matchId);
         const { data: match, error: matchError } = await supabase
           .from('matches')
@@ -99,7 +124,7 @@ export default function ChatPage() {
 
         const { data: messagesData, error: messagesError } = await supabase
           .from('messages')
-          .select('id, match_id, sender_id, content, created_at')
+          .select('id, match_id, sender_id, content, created_at,is_read')
           .eq('match_id', matchId)
           .order('created_at', { ascending: true });
 
@@ -118,11 +143,14 @@ export default function ChatPage() {
         setError('Error loading chat');
         setLoading(false);
       }
+      }
+    
     };
 
     fetchData();
   }, [profileId, matchId]);
 
+//realtime service
   useEffect(() => {
     if (!matchId) return;
 
@@ -139,6 +167,7 @@ export default function ChatPage() {
         (payload) => {
           setMessages((prev) => [...prev, payload.new as Message]);
           scrollToBottom();
+
         }
       )
       .subscribe();
@@ -154,7 +183,9 @@ export default function ChatPage() {
   return regex.test(content);
   };
 
-  const handleSendMessage = async () => {
+
+
+  const handleSendMessage = async ({id,otherId}:{id:string ; otherId: string | undefined }) => {
     if (!newMessage.trim() && !imageFile) {
       toast('Message cannot be empty');
       return;
@@ -178,7 +209,7 @@ export default function ChatPage() {
       //upload image if selected
       if(imageFile){
         const fileExt = imageFile.name.split('.').pop();
-        const fileName = `${currentUserProfile.id}_${Date.now()}.${fileExt}`;
+        const fileName = `${profileId}_${Date.now()}.${fileExt}`;
         const { error: uploadError} = await supabase.storage
         .from('chat-images')
         .upload(fileName, imageFile);
@@ -202,7 +233,8 @@ export default function ChatPage() {
         .from('messages')
         .insert({
           match_id: matchId,
-          sender_id: profileId,
+          sender_id: id,
+          receiver_id: otherId,
           content,
           created_at: new Date().toISOString(),
         });
@@ -210,7 +242,7 @@ export default function ChatPage() {
       if (error) {
         console.error('Error sending message:', error.message);
         setError('Error sending message');
-        setIsSending(false);
+         setIsSending(false);
         return;
       }
 
@@ -255,7 +287,8 @@ export default function ChatPage() {
       {otherUser && (
         <div className="mb-4 flex items-center gap-3">
          <ChevronLeft size={30} onClick={()=>router.back()}/>
-          
+          {isPremium && (
+            <RouteLoader href={`/profile/${otherUser.id}`}>
           {otherUser.avatar ? (
             <img
               src={`${otherUser.avatar}`}
@@ -268,6 +301,28 @@ export default function ChatPage() {
             />
             
           ) : null}
+            </RouteLoader>
+          )}
+          {!isPremium && (
+            <>           
+            <RouteLoader href={`/rent-a-friend`}>
+              {otherUser.avatar ? (
+            <img
+              src={`${otherUser.avatar}`}
+              alt={otherUser.name || 'User'}
+              className="w-10 h-10 rounded-full object-cover"
+             onError={(e) => {
+             e.currentTarget.style.display = 'none';
+               (e.currentTarget.nextElementSibling as HTMLElement)!.style.display = 'flex';
+           }}
+            />
+            
+          ) : null}
+          </RouteLoader>
+          </>
+
+          )}
+          
           
           <div
             className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-white font-bold"
@@ -329,7 +384,7 @@ export default function ChatPage() {
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type a message..."
-          onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+          onKeyDown={(e) => e.key === 'Enter' && handleSendMessage({id: profileId, otherId: otherUser?.id})}
         />
         <Input type='file'
         accept='image/*'
@@ -342,7 +397,7 @@ export default function ChatPage() {
         </Label>
         {imageFile && <span className='text-sm text-geay-500'>{imageFile.name}</span>}
        
-        <Button onClick={handleSendMessage} className="bg-blue-500 hover:bg-blue-600">
+        <Button onClick={()=>handleSendMessage({id: profileId ,otherId: otherUser?.id})} className="bg-blue-500 hover:bg-blue-600">
           <Send className="w-5 h-5" />
         </Button>
       </div>

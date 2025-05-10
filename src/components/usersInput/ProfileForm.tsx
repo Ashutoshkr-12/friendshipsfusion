@@ -87,6 +87,7 @@ const ProfileInputForm = () => {
   if (loader){
     <div className='w-full h-screen flex items-center justify-center'><span className='loader'></span></div>
   }
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -104,10 +105,10 @@ const ProfileInputForm = () => {
     },
   });
   
-
+//setting value of email
   useEffect(() => {
     if (userEmail) {
-      form.setValue('email', userEmail); // Dynamically update the email field
+      form.setValue('email', userEmail); 
       //console.log(userEmail);
     }
   }, [userEmail, form]);
@@ -150,7 +151,6 @@ const ProfileInputForm = () => {
           .from(AVATAR_BUCKET)
           .upload(avatarFileName, avatarFile, {
             upsert: true,
-            // Use authenticated user's ID for path
             cacheControl: '3600',
             contentType: avatarFile.type
           });
@@ -160,7 +160,7 @@ const ProfileInputForm = () => {
           return { success: false, error: `Avatar upload failed: ${avatarError.message}` };
         }
   
-        // Get the public URL for the avatar
+       
         const { data: avatarUrlData } = supabase.storage
           .from(AVATAR_BUCKET)
           .getPublicUrl(avatarFileName);
@@ -177,7 +177,6 @@ const ProfileInputForm = () => {
             .from(POSTS_BUCKET)
             .upload(photoFileName, photoFile, {
               upsert: true,
-              // Use authenticated user's ID for path
               cacheControl: '3600',
               contentType: photoFile.type
             });
@@ -209,12 +208,10 @@ const ProfileInputForm = () => {
         occupation:formData.occupation,
         avatar: avatarUrl,
         photo_url: photoUrls.length > 0 ? photoUrls : null,
-
-      // Ensure this matches the expected format in the database
       };
-    // Insert User Data
-    const { error: insertError } = await supabase.from("profiles").insert(data);
 
+
+    const { error: insertError } = await supabase.from("profiles").insert(data);
     if (insertError) {
       alert("Error saving user data!");
     } 

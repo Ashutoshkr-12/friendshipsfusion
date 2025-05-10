@@ -6,18 +6,22 @@ import { profiles } from '@/lib/types';
 import { toast } from 'sonner';
 import { Heart, Bell } from 'lucide-react';
 import { supabase } from '@/utils/supabase/supabase';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
+
+import { useParams, useRouter } from 'next/navigation';
+import { RouteLoader } from '@/components/ui/routerLoader';
 
 const Index = () => {
   const [profile, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [unread, setUnread] = useState< number >(0);
+  const router = useRouter();
 //  const [ message, setMessage] = useState('');
   const [profile_Id, setProfileid] = useState<string | undefined>();
   const params = useParams();
 
+
+  // Set the userId from search parameters
   useEffect(() => {
-    // Set the userId from search parameters
     const userId = params.profile_id as string;
    // const userId = router.query.Id;
    setProfileid(userId as string || undefined);
@@ -26,7 +30,6 @@ const Index = () => {
 
 
   // Fetch users profiles
-
   useEffect(() => {
     const loadProfiles = async() => {
       const res = await fetch(`/api/datingprofile?profile_Id=${params.profile_id}`,{
@@ -52,6 +55,29 @@ const Index = () => {
     loadProfiles();
   }, []);
 
+  //fetch unread Notification
+useEffect(()=>{
+  const fetchunreadCount = async()=>{
+  try {
+    const { count,error} = await supabase
+    .from('notifications')
+    .select('id',{ count: 'exact', head: true})
+    .eq('user_id', params.profile_id)
+    .eq('is_read', false);
+
+    if(error){
+      console.error("Error in fetching unread count:", error.message);
+    }
+    setUnread(count || 0);
+
+  } catch (error) {
+    console.error('Unexpected Error in fetching notification count:',error);
+    
+  }}
+  fetchunreadCount();
+
+},[params])
+
   if (loading) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
@@ -59,6 +85,7 @@ const Index = () => {
       </div>
     );
   }
+
 
   const handleSwipeLeft = (profile: profiles) => {
     console.log('Rejected:', profile.name);
@@ -142,14 +169,14 @@ const Index = () => {
             Find Your Match
           </h1>
           <div className='relative w-10 h-10 flex items-center justify-center'>
-            <Link href={`/notifications/${profile_Id}`}>
+           <RouteLoader href ={`/notifications/${profile_Id}`} >
             <Bell size={30} className="w-6 h-6 text-gray-700 cursor-pointer"/>
-          {2>0 && (
+          {unread >0 && (
             <span className='absolute top-0 right-0 w-5 h-5 inline-flex items-center justify-center px-1.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full'>
-             
+             {unread}
             </span>
           )}
-          </Link> 
+         </RouteLoader>
           </div>
 
         </div>

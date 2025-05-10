@@ -56,10 +56,6 @@ export default function NotificationPage() {
       setLoading(false);
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> fe0288c6c2ab2fafa3d600c9080f9813ec20619c
 
 
 };
@@ -169,7 +165,7 @@ export default function NotificationPage() {
         sender_id: profile_id,   // if other user likes me back then a dummy message has been sended from there side to mee..
         receiver_id:notif.from_user_id,  // and im the receiver who recieved the message
         content: 'Heyy',
-        created_at: new Date().toISOString,
+      
        });
 
        if(messageError){
@@ -215,6 +211,18 @@ export default function NotificationPage() {
   }
  }
 
+ //making notification mark as read
+ const handleMarkasRead = async ({id}: {id: string})=>{
+  const { error } = await supabase
+  .from('notifications')
+  .update({is_read: true})
+  .eq('id',id);
+
+  if(error){
+    console.error('Error in marking notification as read:',error.message);
+  }
+ };
+
  //loading handler
  if (loading) {
   return (
@@ -223,7 +231,7 @@ export default function NotificationPage() {
     </div>
   );
 }
- 
+
 return (
   <div className="p-4 sm:p-6 max-w-3xl mx-auto">
     <h1 className="text-2xl font-semibold mb-4 flex items-center gap-3">
@@ -279,7 +287,7 @@ return (
                     </p>
                     </div>
                     <Link href={`/rent-a-friend/booking-request/${profile_id}`}>
-                    <Button>See request</Button>
+                    <Button onClick={()=>handleMarkasRead({ id: notif.id })}>See request</Button>
                     </Link>
                     </div>
                   </>
@@ -297,7 +305,7 @@ return (
                     </p>
                     </div>
                     <Link href={`/message`}>
-                    <Button>View chat</Button>
+                    <Button onClick={()=>handleMarkasRead({ id: notif.id })}>View chat</Button>
                     </Link>
                     </div>
                   </>
@@ -325,7 +333,7 @@ return (
               )}
               {notif.type === 'match' && (
                 <Link href={`/message`}>
-                  <Button variant="outline">View Chat</Button>
+                  <Button variant="outline" onClick={()=>handleMarkasRead({ id: notif.id })}>View Chat</Button>
                 </Link>
               )}
             </div>

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { MapPin, Clock } from 'lucide-react';
 import { RentalProfile } from '@/lib/types';
 import Link from 'next/link';
+import { RouteLoader } from '@/components/ui/routerLoader';
 
 interface RentalCardProps {
   profile: RentalProfile;
@@ -13,7 +14,7 @@ interface RentalCardProps {
 const RentalCard: React.FC<RentalCardProps> = ({ profile }) => {
     
   return (
-    <Link href={`/rent-a-friend/${profile.profile_id}`}>
+    <RouteLoader href={`/rent-a-friend/${profile.profile_id}`}>
     <Card className="overflow-hidden hover:shadow-lg  transition-shadow">
       <div className="relative h-64 sm:h-76">
         <img 
@@ -65,7 +66,7 @@ const RentalCard: React.FC<RentalCardProps> = ({ profile }) => {
         </Button>
       </CardFooter>
     </Card>
-    </Link>
+    </RouteLoader>
   );
 };
 

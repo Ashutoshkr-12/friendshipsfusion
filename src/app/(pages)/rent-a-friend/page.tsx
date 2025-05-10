@@ -19,6 +19,8 @@ import {
 import Link from "next/link";
 import { useUser } from "@/hooks/profileIdContext";
 import { supabase } from "@/utils/supabase/supabase";
+import { RouteLoader } from "@/components/ui/routerLoader";
+import { toast } from "sonner";
 
 interface CurrentProfile {
   name: string;
@@ -35,11 +37,13 @@ const Rent = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState< string | null>(null);
   const [availibility, setAvailibility] = useState(true);
+  const [unread, setUnread] = useState< number >(0);
 
   // checking if current user has a rental profile
  useEffect(()=>{
    const checkRentalprofile= async()=>{
-  try {
+    if(profileId){
+      try {
       const { data: profile, error} = await supabase
       .from('rental_profiles')
       .select('name,age,location,hourly_rent,availability')
@@ -61,6 +65,8 @@ const Rent = () => {
   } catch (error) {
     console.error('Error in fetching Profiles:',error)
   }
+    }
+  
    };
 
     checkRentalprofile();
@@ -87,6 +93,32 @@ const Rent = () => {
   }
   fetchRentalProfiles();
   },[])
+
+  //fetch unread requests
+useEffect(()=>{
+  const fetchRequests = async() => {
+    if(profileId){
+        try {
+      const { count, error } = await supabase
+      .from('booking_request')
+      .select('id',{ count: 'exact' , head: true})
+      .eq('rentalprofile_id', profileId)
+      .eq('status', false);
+
+      if(error){
+        console.error('Error in fetching unread request:', error.message)
+        toast('Unable to fetch unread requests')
+      }
+      setUnread(count || 0);
+    } catch (error) {
+      console.error('Unexpected error in fetching unread requests:',error)
+    }
+    }
+  
+  }
+  fetchRequests();
+},[])
+
   if(error){
     return <p className="text-red-500 w-full h-screen flex items-center justify-center">{error}</p>
   }
@@ -102,7 +134,17 @@ const Rent = () => {
           {member ?
           <>
           <div>
-          <Link href={`/rent-a-friend/booking-request/${profileId}`}> <Bell size={30}/></Link>
+         
+         <div className='relative w-10 h-10 flex items-center justify-center'>
+           <RouteLoader href={`/rent-a-friend/booking-request/${profileId}`} >
+            <Bell size={30} className="w-6 h-6 text-gray-700 cursor-pointer"/>
+          {unread >0 && (
+            <span className='absolute top-0 right-0 w-5 h-5 inline-flex items-center justify-center px-1.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full'>
+             {unread}
+            </span>
+          )}
+         </RouteLoader>
+          </div>
           </div>
            <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -153,7 +195,7 @@ const Rent = () => {
           </>
            : <div>
             <Link href={`/rent-a-friend/profile-form`}>
-            <Button className="bg-blue-400 hover:bg-white cursor-pointer">Become a friend</Button>
+            <Button className="bg-blue-400 hover:bg-white cursor-pointer">Become a member</Button>
             </Link>
                         </div>}
             </div>

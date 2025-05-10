@@ -62,6 +62,7 @@ export interface Message {
   created_at: string;
   sender_id: string | boolean;
   match_id: string;
+  is_read: boolean;
 }
 
 export interface messageProfile {
@@ -70,19 +71,19 @@ export interface messageProfile {
   avatar: string | null;
 }
 
-export interface ChatConversation {
-  id: string;
-  person: {
-    id: string;
-    name: string;
-    profilePicture: string;
-  };
-  lastMessage: string;
-  lastMessageTime: string;
-  unreadCount: number;
-  type: 'date' | 'rental';
-  messages: Message[];
-}
+// export interface ChatConversation {
+//   id: string;
+//   person: {
+//     id: string;
+//     name: string;
+//     profilePicture: string;
+//   };
+//   lastMessage: string;
+//   lastMessageTime: string;
+//   unreadCount: number;
+//   type: 'date' | 'rental';
+//   messages: Message[];
+// }
 
 export interface Match {
   id: string;

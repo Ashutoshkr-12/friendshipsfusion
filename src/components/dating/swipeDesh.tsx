@@ -78,7 +78,7 @@ const SwipeDeck: React.FC<SwipeDeckProps> = ({ profile, onSwipeLeft, onSwipeRigh
  
 
   return (
-    <div className="relative flex flex-col items-center justify-center w-full max-w-md mx-auto mt-8">
+    <div className="relative  flex flex-col items-center justify-center w-full max-w-md mx-auto mt-8">
       <motion.div
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
@@ -129,6 +129,19 @@ const SwipeDeck: React.FC<SwipeDeckProps> = ({ profile, onSwipeLeft, onSwipeRigh
           <FcLike size={30} />
         </Button>
       </div>
+     
+         <div className="w-full py-4 flex justify-end items-end">
+          <h1 className="text-md sm:text-lg px-4 text-red-500">
+           "If you encounter any issues{" "}
+          </h1>
+          <a
+            href="mailto:ashutoshkr.8920@gmail.com"
+            className="underline text-blue-600 hover:text-blue-800"
+          >
+          Send feedback"
+          </a>
+        </div>
+      
     </div>
   );
 };

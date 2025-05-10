@@ -8,7 +8,7 @@ import { Calendar, CheckIcon, Clock, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
-
+//action from booking-request page
 interface RequestCard {
     request: rentalRequest;
     action: (requestedId: string, action: "accepted" | "rejected") => Promise<void>;
