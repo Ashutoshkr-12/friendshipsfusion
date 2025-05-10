@@ -1,13 +1,13 @@
 'use client'
 import Link from 'next/link';
 import { createClient } from '@/utils/supabase/server';
-import { redirect, useSearchParams } from 'next/navigation';
+import { redirect, useParams} from 'next/navigation';
 import { confirmReset } from '@/serverActions/authAction';
 
 export default async function ForgotPassword() {
 
-  const searchparams= useSearchParams();
-  const searchParam = searchparams.get("message");
+  const searchparams = useParams();
+  const searchParam = searchparams?.message;
   const supabase = createClient();
 
   const {data: { user }} = await (await supabase).auth.getUser();
