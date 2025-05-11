@@ -6,13 +6,10 @@ import { supabase } from "@/utils/supabase/supabase";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-interface Pageprops {
-  params: {
-    profile_id: string;
-  }
-}
+type PageProps = { params: { profile_id: string } }; // ✅
 
-export default async function Page({ params }: Pageprops ){
+
+export default async function Page({ params }: PageProps ){
 
   const rental_id = params.profile_id
   const { data: profile} = await supabase
