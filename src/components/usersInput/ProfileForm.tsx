@@ -30,28 +30,18 @@ const formSchema = z.object({
   gender: z.string(),
   interested_in: z.string(),
   occupation:z.string(),
-   avatar: z.instanceof(FileList).optional().refine(
-      (files) => !files?.length || (files?.[0]?.size <= MAX_FILE_SIZE), 
-      `Max file size is 6MB`
-    ).refine(
-      (files) => !files?.length || ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      "Only .jpg, .jpeg, .png and .webp formats are supported"
-    ),
-    photo1: z.instanceof(FileList).optional().refine(
-      (files) => !files?.length || (files?.[0]?.size <= MAX_FILE_SIZE), 
-      `Max file size is 6MB`
-    ).refine(
-      (files) => !files?.length || ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      "Only .jpg, .jpeg, .png and .webp formats are supported"
-    ),
-    photo2: z.instanceof(FileList).optional().refine(
-      (files) => !files?.length || (files?.[0]?.size <= MAX_FILE_SIZE), 
-      `Max file size is 6MB`
-    ).refine(
-      (files) => !files?.length || ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      "Only .jpg, .jpeg, .png and .webp formats are supported"
-    ),
-});
+   avatar: z.instanceof(FileList).optional()
+      .refine((files) => !files?.length || files?.[0]?.size <= MAX_FILE_SIZE, `Max file size is 6MB`)
+      .refine((files) => !files?.length || ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type), "Only .jpg, .jpeg, .png and .webp formats are supported"),
+
+    photo1: z.instanceof(FileList).optional()
+      .refine((files) => !files?.length || files?.[0]?.size <= MAX_FILE_SIZE, `Max file size is 6MB`)
+      .refine((files) => !files?.length || ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type), "Only .jpg, .jpeg, .png and .webp formats are supported"),
+
+    photo2: z.instanceof(FileList).optional()
+      .refine((files) => !files?.length || files?.[0]?.size <= MAX_FILE_SIZE, `Max file size is 6MB`)
+      .refine((files) => !files?.length || ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type), "Only .jpg, .jpeg, .png and .webp formats are supported"),
+  }); 
 
 
 const ProfileInputForm = () => {
