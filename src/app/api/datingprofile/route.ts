@@ -18,7 +18,7 @@ export async function GET(request: Request){
        }
        return NextResponse.json({ profiles: data}, { status:200})
 
- } catch (error) {
-    return NextResponse.json({ message: 'Error in fetching profiles'})
- }
+} catch {
+  return NextResponse.json({ message: 'Error in fetching profiles' }, { status: 500 });
+}
 }

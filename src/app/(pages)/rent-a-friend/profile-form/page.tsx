@@ -58,16 +58,22 @@ const Rentalprofile = () => {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {    
-      name: '',
-      age: '',
-      location: '',
-      bio: '',    
-      services: '',
-      gender:'', 
-      occupation:'',
-      
-    },
+  defaultValues: {    
+  name: '',
+  age: '',
+  height: '',
+  weight: '',
+  gender: '',
+  language: '',
+  location: '',
+  hourly_rent: '',
+  bio: '',
+  services: '',
+  occupation: '',
+  photo1: undefined,
+  photo2: undefined,
+}
+
   });
   
 
@@ -109,7 +115,7 @@ const Rentalprofile = () => {
       if (photoFiles && photoFiles.length > 0) {
         for (const photoFile of photoFiles) {
           const photoFileName = `photo_${profileId}_${Date.now()}_${photoFile.name}`;
-          const { data: photoData, error: photoError } = await supabase.storage
+          const {  error: photoError } = await supabase.storage
             .from(POSTS_BUCKET)
             .upload(photoFileName, photoFile, {
               upsert: true,
@@ -343,7 +349,7 @@ const Rentalprofile = () => {
                       className='border py-1.5 bg-zinc-800 px-2 rounded-lg'
                       {...field}
                     >
-                      <option className='bg-zinc-700 text-slate-800' >Select your gender</option>
+                      <option className='bg-zinc-700 text-slate-800' value=''>Select your gender</option>
                       <option className='bg-zinc-700 text-white' value='Male'>Male</option>
                       <option className='bg-zinc-700 text-white' value='Female'>Female</option>
                       <option className='bg-zinc-700 text-white' value='Trans'>Trans</option>

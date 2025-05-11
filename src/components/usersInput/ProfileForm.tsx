@@ -21,7 +21,8 @@ const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/web
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
-  age: z.string().refine(val => !isNaN(Number(val)) && Number(val) >= 18, { message: 'You must be at least 18 years old.' }),
+ age: z.string().refine(val => !isNaN(Number(val)) && Number(val) >= 18, { 
+  message: 'You must be at least 18 years old.'}), 
   email: z.string().email({ message: 'Please enter a valid email.' }),
   location: z.string().min(2, { message: 'Location must be at least 2 characters.' }),
   bio: z.string().min(10, { message: 'Bio must be at least 10 characters.' }).max(300, { message: 'Bio cannot exceed 300 characters.' }),
@@ -101,7 +102,9 @@ const ProfileInputForm = () => {
       gender:'',
       interested_in: '',
       occupation:'',
-      
+      avatar: undefined,
+       photo1: undefined,
+  photo2: undefined,
     },
   });
   
@@ -147,7 +150,7 @@ const ProfileInputForm = () => {
       let avatarUrl;
       if (avatarFile) {
         const avatarFileName = `avatar_${userid}_${Date.now()}_${avatarFile.name}`;
-        const { data: avatarData, error: avatarError } = await supabase.storage
+        const {  error: avatarError } = await supabase.storage
           .from(AVATAR_BUCKET)
           .upload(avatarFileName, avatarFile, {
             upsert: true,
@@ -173,7 +176,7 @@ const ProfileInputForm = () => {
       if (photoFiles && photoFiles.length > 0) {
         for (const photoFile of photoFiles) {
           const photoFileName = `photo_${userid}_${Date.now()}_${photoFile.name}`;
-          const { data: photoData, error: photoError } = await supabase.storage
+          const { error: photoError } = await supabase.storage
             .from(POSTS_BUCKET)
             .upload(photoFileName, photoFile, {
               upsert: true,
@@ -381,7 +384,7 @@ const ProfileInputForm = () => {
                       className='border py-1.5 bg-zinc-800 px-2 rounded-lg'
                       {...field}
                     >
-                      <option className='bg-zinc-700 text-slate-800' >Select your gender</option>
+                      <option className='bg-zinc-700 text-slate-800' value='' >Select your gender</option>
                       <option className='bg-zinc-700 text-white' value='Male'>Male</option>
                       <option className='bg-zinc-700 text-white' value='Female'>Female</option>
                       <option className='bg-zinc-700 text-white' value='Trans'>Trans</option>
@@ -406,7 +409,7 @@ const ProfileInputForm = () => {
                   </FormLabel>
                   <FormControl>
                     <select  id="gender" className='border py-1.5 bg-zinc-800 px-2 rounded-lg'{...field}>
-                      <option className='bg-zinc-700 text-slate-600' >Select whom you are interested in</option>
+                      <option className='bg-zinc-700 text-slate-600'value ='' >Select whom you are interested in</option>
                       <option className='bg-zinc-700 text-white' value='Male'>Male</option>
                       <option className='bg-zinc-700 text-white' value='Female'>Female</option>
                       <option className='bg-zinc-700 text-white' value='Everyone'>Everyone</option>

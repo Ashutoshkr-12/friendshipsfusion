@@ -109,7 +109,7 @@ export interface RentalProfile {
   profile_id: string;
   availability: boolean;
 }
-  export interface RentalHistory {
+ export interface RentalHistory {
     id: string;
     name: string;
     profilePicture: string;
@@ -118,7 +118,7 @@ export interface RentalProfile {
     amount: number;
   }
   
-  export interface UserProfile {
+export interface UserProfile {
     id: string;
     name: string;
     age: number;

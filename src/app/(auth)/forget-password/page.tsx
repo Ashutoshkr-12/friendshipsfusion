@@ -3,17 +3,23 @@ import Link from 'next/link';
 import { supabase } from '@/utils/supabase/supabase';
 import { redirect, useSearchParams} from 'next/navigation';
 import { confirmReset } from '@/serverActions/authAction';
+import { useEffect } from 'react';
 
-export default async function ForgotPassword() {
+export default function ForgotPassword() {
 
   const searchparams = useSearchParams();
   const searchParam = searchparams.get('message');
 
-  const {data: { user }} = await supabase.auth.getUser();
-
-  if (user) {
-    return redirect('/');
+  useEffect(()=>{
+const fetchuser = async()=>{
+    const {data: { user }} = await supabase.auth.getUser();
+  
+    if (user) {
+      return redirect('/');
+    }
   }
+  fetchuser();
+  },[searchParam])
 
   return (
     <div className='w-full h-screen flex flex-col justify-center bg-[#c59fdb] '>

@@ -6,15 +6,14 @@ import { profiles } from '@/lib/types';
 import { toast } from 'sonner';
 import { Heart, Bell } from 'lucide-react';
 import { supabase } from '@/utils/supabase/supabase';
-
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { RouteLoader } from '@/components/ui/routerLoader';
 
 const Index = () => {
   const [profile, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [unread, setUnread] = useState< number >(0);
-  const router = useRouter();
+ 
 //  const [ message, setMessage] = useState('');
   const [profile_Id, setProfileid] = useState<string | undefined>();
   const params = useParams();

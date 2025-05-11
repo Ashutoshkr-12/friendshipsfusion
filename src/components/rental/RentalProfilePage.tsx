@@ -3,19 +3,22 @@ import { useUser } from "@/hooks/profileIdContext";
 import { RentalProfile, Review } from "@/lib/types";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
-import { 
-   Clock, MapPin, Star } from "lucide-react";
-import { Badge } from "../ui/badge";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { Clock, MapPin, Star } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog";
+} from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -161,22 +164,23 @@ export default function RentalProfilePage({
     fetchReview();
 
     const channel = supabase
-    .channel('realtime-reviews')
-    .on('postgres_changes',
-      {
-        event: "INSERT",
-        schema: "public",
-        table: "reviews",
-        filter: `rentalprofiles_id=eq.${rental_id}`,
-      },
-      (payload) => {
-        const newReview = payload.new;
-        setData((prev: any)=> [newReview, ...prev]);
-      }
-    )
-    .subscribe();
+      .channel("realtime-reviews")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "reviews",
+          filter: `rentalprofiles_id=eq.${rental_id}`,
+        },
+        (payload) => {
+          const newReview = payload.new as Review;
+          setData((prev: Review[]) => [newReview, ...prev]);
+        }
+      )
+      .subscribe();
 
-    return ()=>{
+    return () => {
       supabase.removeChannel(channel);
     };
   }, [rental_id]);
@@ -272,7 +276,7 @@ export default function RentalProfilePage({
                 <div className="flex items-center text-gray-600">
                   <Clock size={18} className="mr-2" />
                   <span>
-                    Available:{" "}
+                    Available:
                     {profile.availability ? (
                       <span className="text-green-400">Online</span>
                     ) : (
@@ -300,7 +304,6 @@ export default function RentalProfilePage({
                 {/* edit  or rent a friend */}
                 {isOwner ? (
                   <>
-                    {" "}
                     <Dialog open={open} onOpenChange={setOpen}>
                       <DialogTrigger asChild>
                         <Button className="w-full bg-purple-600 hover:bg-purple-700">
@@ -488,7 +491,6 @@ export default function RentalProfilePage({
                         </div>
                         <DialogFooter>
                           <Button onClick={handleRentFriend}>
-                            {" "}
                             Send Request
                           </Button>
                         </DialogFooter>

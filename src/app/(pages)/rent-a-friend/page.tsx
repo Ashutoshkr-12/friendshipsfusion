@@ -1,6 +1,6 @@
 "use client";
 import {  useEffect, useState } from "react";
-import { Bell, BellRing } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import AppLayout from "@/components/AppLayout/applayout";
 import RentalGrid from "@/components/rental/rental";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
@@ -83,8 +83,7 @@ const Rent = () => {
         return;
       }
       const data = await res.json();
-      
-17
+
       if(data.profiles){
         setRentalprofiles(data.profiles);
       }
@@ -92,7 +91,7 @@ const Rent = () => {
       setLoading(false);
   }
   fetchRentalProfiles();
-  },[])
+  },[profileId])
 
   //fetch unread requests
 useEffect(()=>{
@@ -117,7 +116,23 @@ useEffect(()=>{
   
   }
   fetchRequests();
-},[])
+},[profileId])
+
+//check and update availability
+const updateAvailability = async (newStatus: boolean) => {
+  const { error } = await supabase
+    .from('rental_profiles')
+    .update({ availability: newStatus })
+    .eq('profile_id', profileId);
+
+  if (!error) {
+    setAvailibility(newStatus);
+    toast.success('Availability updated');
+  } else {
+    toast.error('Failed to update availability');
+  }
+};
+
 
   if(error){
     return <p className="text-red-500 w-full h-screen flex items-center justify-center">{error}</p>
@@ -177,7 +192,8 @@ useEffect(()=>{
                     <span>Available</span>
                     <Switch
                       checked={availibility}
-                      onCheckedChange={setAvailibility}
+                     onCheckedChange={updateAvailability}
+
                     />
                   </div>
                 </DropdownMenuItem>

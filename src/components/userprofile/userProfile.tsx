@@ -78,13 +78,13 @@ const UserProfile: React.FC<UserProfileProps> = ({ userProfile }) => {
       {isOwner && (
         <div className="w-full py-4 flex justify-center items-center">
           <h1 className="text-md sm:text-lg px-4 text-red-500">
-            "Currently in Testing Phase, If there is any issue"{" "}
+            "Currently in Testing Phase, If there is any issue"
           </h1>
           <a
             href="mailto:ashutoshkr.8920@gmail.com"
             className="underline text-blue-600 hover:text-blue-800"
           >
-          Send feedback
+            Send feedback
           </a>
         </div>
       )}
