@@ -116,7 +116,9 @@ const UserProfile: React.FC<UserProfileProps> = ({ userProfile }) => {
                 </Avatar>
               </DialogTrigger>
               <DialogContent className="reltive overflow-hidden h-64 w-64 rounded-full object-cover flex items-center justify-center">
+                <DialogTitle>
                 <img src={userProfile.avatar} alt="" className="rounded-full" />
+              </DialogTitle>
               </DialogContent>
             </Dialog>
             {isOwner && (
