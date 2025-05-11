@@ -34,7 +34,7 @@ const SwipeDeck: React.FC<SwipeDeckProps> = ({ profile, onSwipeLeft, onSwipeRigh
   }
 
 
-  const handleDragEnd = async (_: any, info: DragEndInfo) => {
+  const handleDragEnd = async (_: Event, info: DragEndInfo) => {
     const direction = info.offset.x > 100 ? 'right' : info.offset.x < -100 ? 'left' : null;
     //console.log('Outer drag ended with offset:', info.offset.x, 'Direction:', direction);
 
@@ -132,7 +132,7 @@ const SwipeDeck: React.FC<SwipeDeckProps> = ({ profile, onSwipeLeft, onSwipeRigh
      
          <div className="w-full py-4 flex justify-end items-end">
           <h1 className="text-md sm:text-lg px-4 text-red-500">
-           "If you encounter any issues{" "}
+           &quot;If you encounter any issues
           </h1>
           <a
             href="mailto:ashutoshkr.8920@gmail.com"

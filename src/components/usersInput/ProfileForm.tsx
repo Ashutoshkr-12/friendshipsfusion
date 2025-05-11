@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -241,7 +241,6 @@ const ProfileInputForm = () => {
     <div>
       <div className='border-b p-2'>
        <Image
-                  className=" "
                   src="/friendshipfusionlogo.png"
                   alt="friendship/fusion"
                   width={250}
@@ -327,7 +326,7 @@ const ProfileInputForm = () => {
                     <Input placeholder="Your name" {...field} />
                   </FormControl>
                   <FormDescription>
-                    This is how you'll appear to others.
+                    This is how you&apos;ll appear to others.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -384,7 +383,7 @@ const ProfileInputForm = () => {
                       className='border py-1.5 bg-zinc-800 px-2 rounded-lg'
                       {...field}
                     >
-                      <option className='bg-zinc-700 text-slate-800' value='' >Select your gender</option>
+                      <option className='bg-zinc-700 text-slate-800' value='prefer not to say' >Select your gender</option>
                       <option className='bg-zinc-700 text-white' value='Male'>Male</option>
                       <option className='bg-zinc-700 text-white' value='Female'>Female</option>
                       <option className='bg-zinc-700 text-white' value='Trans'>Trans</option>
@@ -409,7 +408,7 @@ const ProfileInputForm = () => {
                   </FormLabel>
                   <FormControl>
                     <select  id="gender" className='border py-1.5 bg-zinc-800 px-2 rounded-lg'{...field}>
-                      <option className='bg-zinc-700 text-slate-600'value ='' >Select whom you are interested in</option>
+                      <option className='bg-zinc-700 text-slate-600'value ='prefer not to say' >Select whom you are interested in</option>
                       <option className='bg-zinc-700 text-white' value='Male'>Male</option>
                       <option className='bg-zinc-700 text-white' value='Female'>Female</option>
                       <option className='bg-zinc-700 text-white' value='Everyone'>Everyone</option>
@@ -454,7 +453,7 @@ const ProfileInputForm = () => {
                     />
                   </FormControl>
                   <FormDescription>
-                    Write a short bio that describes your personality, hobbies, and what you're looking for.
+                    Write a short bio that describes your personality, hobbies, and what you&apos;re looking for.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

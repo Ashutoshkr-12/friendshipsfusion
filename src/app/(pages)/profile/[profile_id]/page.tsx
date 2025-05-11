@@ -7,7 +7,7 @@ import UserProfile from "@/components/userprofile/userProfile";
 import { useParams } from "next/navigation";
 
 
-function profile() {
+function Profile() {
   const [currentUserProfile, setCurrentUSerProfile] = useState<profiles>();
  const params= useParams();
   
@@ -38,4 +38,4 @@ fetchUserProfile()
   )
 }
 
-export default profile;
+export default Profile;

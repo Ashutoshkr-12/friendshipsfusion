@@ -58,7 +58,7 @@ export default function Home() {
               </span>
               <span className="py-1 text-md flex gap-x-1.5">
                 <ArrowBigRight />
-                Don't be too quick to give out your personal information.
+               Don&apos;t be too quick to give out your personal information.
               </span>
               <span className="py-1 text-md flex gap-x-1.5">
                 <ArrowBigRight />

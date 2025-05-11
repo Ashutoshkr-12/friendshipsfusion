@@ -5,7 +5,6 @@ import { supabase } from '@/utils/supabase/supabase';
 import { useUser } from '@/hooks/profileIdContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { formatDistanceToNow, parseISO } from 'date-fns';
-import Link from 'next/link';
 import { messageProfile, Match, Message } from '@/lib/types';
 import AppLayout from '@/components/AppLayout/applayout';
 import { RouteLoader } from '@/components/ui/routerLoader';

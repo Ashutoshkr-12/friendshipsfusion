@@ -1,28 +1,29 @@
-'use client';
-import Link from 'next/link';
-import { supabase } from '@/utils/supabase/supabase';
-import { redirect, useSearchParams} from 'next/navigation';
-import { confirmReset } from '@/serverActions/authAction';
-import { useEffect } from 'react';
+"use client";
+import Link from "next/link";
+import { supabase } from "@/utils/supabase/supabase";
+import { redirect, useSearchParams } from "next/navigation";
+import { confirmReset } from "@/serverActions/authAction";
+import { useEffect } from "react";
 
 export default function ForgotPassword() {
-
   const searchparams = useSearchParams();
-  const searchParam = searchparams.get('message');
+  const searchParam = searchparams.get("message");
 
-  useEffect(()=>{
-const fetchuser = async()=>{
-    const {data: { user }} = await supabase.auth.getUser();
-  
-    if (user) {
-      return redirect('/');
-    }
-  }
-  fetchuser();
-  },[searchParam])
+  useEffect(() => {
+    const fetchuser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        return redirect("/");
+      }
+    };
+    fetchuser();
+  }, [searchParam]);
 
   return (
-    <div className='w-full h-screen flex flex-col justify-center bg-[#c59fdb] '>
+    <div className="w-full h-screen flex flex-col justify-center bg-[#c59fdb] ">
       <div className=" sm:max-w-md w-2xl min-h-fit p-10 py-16 rounded-md shadow-2xl mx-auto">
         <form
           className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground mb-4"
@@ -53,10 +54,21 @@ const fetchuser = async()=>{
           href="/login"
           className="flex gap-2 items-center rounded-md no-underline text-foreground text-md"
         >
-          Remember your password?<p className='text-indigo-600 font-mono underline'>Signin</p>
+          Remember your password?
+          <p className="text-indigo-600 font-mono underline">Signin</p>
         </Link>
-        <p className='mt-4 text-red-700 select-none'><span className='font-serif font-semibold'>Note:</span>  <span>1. After submitting you can get the magic link in your mail for reset password.</span><br/>
-        <span>2. If you can't get the mail means your email is not verified so signUp. </span></p>
+        <p className="mt-4 text-red-700 select-none">
+          <span className="font-serif font-semibold">Note:</span>{" "}
+          <span>
+            1. After submitting you can get the magic link in your mail for
+            reset password.
+          </span>
+          <br />
+          <span>
+            2. If you can't get the mail means your email is not verified so
+            signUp.
+          </span>
+        </p>
       </div>
     </div>
   );
