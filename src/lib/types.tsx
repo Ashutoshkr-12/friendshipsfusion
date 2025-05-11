@@ -26,7 +26,7 @@ export type rentalRequest = {
   when: string;
   duration: number;
   message: string;
-  profiles: profiles;
+  profiles: any;
 
 }
 
@@ -37,7 +37,7 @@ export type Review ={
   rating: number;
   created_at: string;
   comment: string;
-  profiles:profiles;
+  profiles:any;
 }
 
 export type Notification = {
@@ -48,7 +48,7 @@ export type Notification = {
   from_user_id: string;
   is_read: boolean;
   metadata: { match_id: string };
-  profiles:profiles;
+  profiles:any;
 //   profiles: {
 //     name: string ,
 //     avatar: string   

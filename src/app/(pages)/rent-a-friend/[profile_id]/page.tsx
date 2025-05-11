@@ -4,15 +4,11 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/utils/supabase/supabase";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 
-type Props = {
-  params: {
-    profile_id: string;
-  };
-};
-
-export default async function Page({ params }: Props) {
-  const rental_id = params.profile_id;
+export default async function Page() {
+  const params = useParams();
+  const rental_id = params.profile_id as string;
 
   const { data: profile } = await supabase
     .from("rental_profiles")
