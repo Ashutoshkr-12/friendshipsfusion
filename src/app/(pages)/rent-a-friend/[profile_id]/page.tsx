@@ -1,3 +1,4 @@
+'use client'
 import AppLayout from "@/components/AppLayout/applayout";
 import RentalProfilePage from "@/components/rental/RentalProfilePage";
 import { Button } from "@/components/ui/button";
