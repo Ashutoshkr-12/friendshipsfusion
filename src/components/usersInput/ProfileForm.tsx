@@ -103,8 +103,8 @@ const ProfileInputForm = () => {
       interested_in: '',
       occupation:'',
       avatar: undefined,
-       photo1: undefined,
-  photo2: undefined,
+      photo1: undefined,
+      photo2: undefined,
     },
   });
   
