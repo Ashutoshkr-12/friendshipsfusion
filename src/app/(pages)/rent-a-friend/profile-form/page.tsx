@@ -632,7 +632,7 @@ const Rentalprofile = () => {
                       </FormControl>
                       <FormDescription>
                         Write a short bio that describes your personality,
-                        hobbies, and all.
+                        hobbies, and all
                       </FormDescription>
                       <FormMessage />
                     </FormItem>

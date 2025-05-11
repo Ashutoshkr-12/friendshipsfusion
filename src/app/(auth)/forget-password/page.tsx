@@ -58,7 +58,7 @@ export default function ForgotPassword() {
           <p className="text-indigo-600 font-mono underline">Signin</p>
         </Link>
         <p className="mt-4 text-red-700 select-none">
-          <span className="font-serif font-semibold">Note:</span>{" "}
+          <span className="font-serif font-semibold">Note:</span>
           <span>
             1. After submitting you can get the magic link in your mail for
             reset password.

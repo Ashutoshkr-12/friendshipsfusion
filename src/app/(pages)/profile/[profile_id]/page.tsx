@@ -1,20 +1,20 @@
 'use client'
+import { useEffect, useState } from "react";
 import AppLayout from "@/components/AppLayout/applayout"
 import type { UserProfile as profiles } from "@/lib/types"
 import { supabase } from "@/utils/supabase/supabase";
-import { useEffect, useState } from "react";
 import UserProfile from "@/components/userprofile/userProfile";
 import { useParams } from "next/navigation";
 
 
-function Profile() {
+function Profilepage() {
   const [currentUserProfile, setCurrentUSerProfile] = useState<profiles>();
  const params= useParams();
   
+ const userid= params.profile_id as string;
 
   useEffect(()=>{
     const fetchUserProfile= async ()=>{
-      const userid= params.profile_id as string;
   // console.log(userid)
       const { data, error } = await supabase
       .from('profiles')
@@ -38,4 +38,4 @@ fetchUserProfile()
   )
 }
 
-export default Profile;
+export default Profilepage;
