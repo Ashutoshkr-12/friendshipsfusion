@@ -28,7 +28,7 @@ export default function ResetPassword() {
     }
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className='w-full h-screen flex items-center justify-center'><span className='loader'></span></div>}>
     <div className='w-full h-screen flex flex-col justify-center bg-[#c59fdb] '>
       <div className="sm:max-w-md w-2xl min-h-fit p-10 py-16 rounded-md shadow-2xl mx-auto select-none">
         <form

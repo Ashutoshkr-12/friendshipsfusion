@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { Suspense } from "react";
 import { supabase } from "@/utils/supabase/supabase";
 import { redirect, useSearchParams } from "next/navigation";
 import { confirmReset } from "@/serverActions/authAction";
@@ -23,6 +24,7 @@ export default function ForgotPassword() {
   }, [searchParam]);
 
   return (
+    <Suspense fallback={<div className="w-full h-screen flex items-center justify-center"><span className="loader"></span></div>}>
     <div className="w-full h-screen flex flex-col justify-center bg-[#c59fdb] ">
       <div className=" sm:max-w-md w-2xl min-h-fit p-10 py-16 rounded-md shadow-2xl mx-auto">
         <form
@@ -71,5 +73,6 @@ export default function ForgotPassword() {
         </p>
       </div>
     </div>
+    </Suspense>
   );
 }
