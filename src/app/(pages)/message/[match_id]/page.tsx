@@ -224,7 +224,7 @@ export default function ChatPage() {
         .from('chat-images')
         .getPublicUrl(fileName);
 
-        content = urlData.publicUrl;
+        content = urlData.publicUrl.replace(/%0A/g,'');
       }else{
         content = newMessage;
       }
