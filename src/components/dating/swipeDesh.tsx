@@ -1,12 +1,11 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import { motion, useMotionValue, useTransform, useAnimationControls } from 'framer-motion';
 import SwipeCard from '@/components/dating/swipeCard';
 import { profiles } from '@/lib/types';
 import { X } from 'lucide-react';
 import { FcLike } from 'react-icons/fc';
 import { Button } from '@/components/ui/button';
-
 
 interface SwipeDeckProps {
   profile: profiles[];
@@ -15,10 +14,7 @@ interface SwipeDeckProps {
 }
 
 const SwipeDeck: React.FC<SwipeDeckProps> = ({ profile, onSwipeLeft, onSwipeRight }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-
-  const currentProfile = profile[currentIndex];
+  const currentProfile = profile[0];
   const x = useMotionValue(0);
   const controls = useAnimationControls();
 
@@ -33,22 +29,20 @@ const SwipeDeck: React.FC<SwipeDeckProps> = ({ profile, onSwipeLeft, onSwipeRigh
     };
   }
 
-
   const handleDragEnd = async (_: Event, info: DragEndInfo) => {
     const direction = info.offset.x > 100 ? 'right' : info.offset.x < -100 ? 'left' : null;
-    //console.log('Outer drag ended with offset:', info.offset.x, 'Direction:', direction);
 
     if (direction === 'left') {
       await controls.start({ x: -500, opacity: 0 });
       onSwipeLeft(currentProfile);
-      if (currentIndex < profile.length - 1) setCurrentIndex(currentIndex + 1);
     } else if (direction === 'right') {
       await controls.start({ x: 500, opacity: 0 });
       onSwipeRight(currentProfile);
-      if (currentIndex < profile.length - 1) setCurrentIndex(currentIndex + 1);
     } else {
       controls.start({ x: 0, opacity: 1 });
     }
+
+    controls.set({ x: 0, opacity: 1 });
   };
 
   const handleButtonSwipe = async (direction: 'left' | 'right') => {
@@ -59,26 +53,20 @@ const SwipeDeck: React.FC<SwipeDeckProps> = ({ profile, onSwipeLeft, onSwipeRigh
       await controls.start({ x: 500, opacity: 0 });
       onSwipeRight(currentProfile);
     }
-    if (currentIndex < profile.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-      controls.set({ x: 0, opacity: 1 });
-    }
-
-    if (profile.length === 0) {
-      return (
-        <div className="flex flex-col items-center justify-center h-[70vh]">
-          <h2 className="text-2xl font-bold mb-4">No more profiles to show!</h2>
-          <p className="text-gray-500 mb-4">Check back later for more matches</p>
-          <Button onClick={() => setCurrentIndex(0)}>Start Over</Button>
-        </div>
-      );
-    }
+    controls.set({ x: 0, opacity: 1 });
   };
 
- 
+  if (!currentProfile) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[70vh]">
+        <h2 className="text-2xl font-bold mb-4">No more profiles to show!</h2>
+        <p className="text-gray-500 mb-4">Check back later for more matches</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="relative  flex flex-col items-center justify-center w-full max-w-md mx-auto mt-8">
+    <div className="relative flex flex-col items-center justify-center w-full max-w-md mx-auto mt-8">
       <motion.div
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
@@ -101,14 +89,8 @@ const SwipeDeck: React.FC<SwipeDeckProps> = ({ profile, onSwipeLeft, onSwipeRigh
         </motion.div>
         <SwipeCard
           profile={currentProfile}
-          onSwipeLeft={() => {
-            onSwipeLeft(currentProfile);
-            if (currentIndex < profile.length - 1) setCurrentIndex(currentIndex + 1);
-          }}
-          onSwipeRight={() => {
-            onSwipeRight(currentProfile);
-            if (currentIndex < profile.length - 1) setCurrentIndex(currentIndex + 1);
-          }}
+          onSwipeLeft={() => onSwipeLeft(currentProfile)}
+          onSwipeRight={() => onSwipeRight(currentProfile)}
         />
       </motion.div>
       <div className="flex justify-center gap-10 mt-6 mb-20 md:mb-6">
@@ -129,19 +111,18 @@ const SwipeDeck: React.FC<SwipeDeckProps> = ({ profile, onSwipeLeft, onSwipeRigh
           <FcLike size={30} />
         </Button>
       </div>
-     
-         <div className="w-full py-4 flex justify-end items-end">
-          <h1 className="text-md sm:text-lg px-4 text-red-500">
-           &quot;If you encounter any issues
-          </h1>
-          <a
-            href="mailto:ashutoshkr.8920@gmail.com"
-            className="underline text-blue-600 hover:text-blue-800"
-          >
+
+      <div className="w-full py-4 flex justify-end items-end">
+        <h1 className="text-md sm:text-lg px-4 text-red-500">
+          &quot;If you encounter any issues
+        </h1>
+        <a
+          href="mailto:ashutoshkr.8920@gmail.com"
+          className="underline text-blue-600 hover:text-blue-800"
+        >
           Send feedback"
-          </a>
-        </div>
-      
+        </a>
+      </div>
     </div>
   );
 };

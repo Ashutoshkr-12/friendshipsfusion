@@ -10,10 +10,9 @@ import { useParams } from 'next/navigation';
 import { RouteLoader } from '@/components/ui/routerLoader';
 
 const Index = () => {
-  const [profile, setProfiles] = useState([]);
+  const [profile, setProfiles] = useState<profiles[]>([]);
   const [loading, setLoading] = useState(true);
   const [unread, setUnread] = useState< number >(0);
- 
 //  const [ message, setMessage] = useState('');
   const [profile_Id, setProfileid] = useState<string | undefined>();
   const params = useParams();
@@ -86,8 +85,9 @@ useEffect(()=>{
   }
 
 
-  const handleSwipeLeft = (profile: profiles) => {
-    console.log('Rejected:', profile.name);
+  const handleSwipeLeft = (rejectedProfile: profiles) => {
+    console.log('Rejected:', rejectedProfile.name);
+    setProfiles(prev => prev.filter(p => p.id !== rejectedProfile.id));
   };
 
   const handleSwipeRight = async (profile: profiles) => {
@@ -111,7 +111,6 @@ useEffect(()=>{
 
     if (likeError?.code === '22P02') {
     toast( 'Profile already liked' );
-      // Handle error (e.g., show a message to the user)
       return;
     }
 
@@ -145,18 +144,13 @@ useEffect(()=>{
           ));
         }, 100);
       }
+       // Remove liked profile from the list
+      setProfiles(prev => prev.filter(p => p.id !== profile.id));
     };
     }
     
     // Simulate a match 50% of the time
-    if (!profile ) {
-      return (
-        <div className="flex flex-col items-center justify-center h-[70vh]">
-          <h2 className="text-2xl font-bold mb-4">No profiles to show!</h2>
-          <p className="text-gray-500 mb-4">Check back later for more matches</p>
-        </div>
-      );
-    }
+   
    
 
  
@@ -179,12 +173,20 @@ useEffect(()=>{
           </div>
 
         </div>
-
+{profile.length === 0 ? (
+        <div className="flex flex-col items-center justify-center h-[70vh]">
+          <h2 className="text-2xl font-bold mb-4">No profiles to show!</h2>
+          <p className="text-gray-500 mb-4">Check back later for more matches</p>
+        </div>
+      ) : (
         <SwipeDeck
           profile={profile}
           onSwipeLeft={handleSwipeLeft}
           onSwipeRight={handleSwipeRight}
         />
+      )
+    }
+        
       </div>
     </AppLayout>
   );
