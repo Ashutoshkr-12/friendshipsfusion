@@ -3,6 +3,7 @@ import { CheckCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import React from 'react'
+import { toast } from "sonner";
 
 export default function Checkoutpage() {
   const benefits = [
@@ -15,7 +16,7 @@ export default function Checkoutpage() {
 
   const handleBuyNow = () => {
     // Redirect to payment gateway or open payment modal
-    alert('Currently in developing phase...');
+  toast('Currently in developing phase');
   };
 
   return (
