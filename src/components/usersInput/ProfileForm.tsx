@@ -158,7 +158,9 @@ const ProfileInputForm = () => {
           .from(AVATAR_BUCKET)
           .getPublicUrl(avatarFileName);
   
-        avatarUrl = avatarUrlData.publicUrl.trim();
+       avatarUrl = avatarUrlData.publicUrl
+    .trim()
+    .replace(/^(\n|%0A)+/, ''); //remove newline or %0A
       }
   
       // Upload photos if provided
@@ -184,7 +186,11 @@ const ProfileInputForm = () => {
             .from(POSTS_BUCKET)
             .getPublicUrl(photoFileName);
   
-          photoUrls.push(photoUrlData.publicUrl.trim());
+          const cleanedUrl = photoUrlData.publicUrl
+      .trim()
+      .replace(/^(\n|%0A)+/, ''); //clean newline/prefix
+
+    photoUrls.push(cleanedUrl);
         }
       }
   
