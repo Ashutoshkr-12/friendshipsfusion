@@ -13,17 +13,17 @@ return(
     <div className="w-full flex flex-col select-none items-center h-screen py-6 px-3">
           <div className="sm:mx-auto sm:w-full border-b mb-4 sm:max-w-sm ">
                   <Image
-                    className="mx-auto mb-3"
+                    className="mx-auto mb-3 filter brightness-200"
                     src="/friendshipfusionlogo.png"
                     alt="friendship/fusion"
                     width={280}
                     height={35}
                     priority
                   />
-                   <h2 className="text-xl font-semibold text-blue-800 mb-2">🚨 Rent a Friend - Rules & Disclaimer</h2>
+                   <h2 className="text-xl font-semibold mb-2 brightness-200">🚨 Rent a Friend - Rules & Disclaimer</h2>
                 </div>
    <section className=" border border-blue-400 rounded-xl p-4 mb-6">
-          <ul className="list-disc text-lg list-inside text-blue-700 space-y-1">
+          <ul className="list-disc text-lg list-inside space-y-1">
             <li>This service is strictly for social companionship purposes only.</li>
             <li>Respect and consent are mandatory — any inappropriate behavior will lead to a permanent ban.</li>
             <li>Friends are not obligated to continue interactions beyond the agreed time.</li>

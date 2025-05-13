@@ -17,6 +17,7 @@ const Navbar = () => {
     router.push(href);
   };
  
+  // fetch unread message count
   useEffect(()=>{
   const fetchunreadCount = async()=>{
     try {
@@ -32,16 +33,23 @@ const Navbar = () => {
     }
     setUnread(count || 0);
     }
-   
-
   } catch (error) {
     console.error('Unexpected Error in fetching notification count:',error);
     
   }}
-
   fetchunreadCount();
+},[profileId]);
 
-},[profileId])
+const handleMarkasRead = async({id}: {id: string}) =>{
+const {error} = await supabase
+.from('messages')
+.update({is_read: true})
+.eq('receiver_id',id);
+
+if(error){
+  console.error('Error from nav bar:',error.message);
+}
+}
   return (
     <>
       {/* Animated Loading Bar */}
@@ -64,7 +72,7 @@ const Navbar = () => {
           </button>
            <div className='relative w-10 h-10 flex items-center justify-center'>
           <button onClick={() => handleClick('/message')} className="active:bg-slate-200 active:text-black px-4 py-4 rounded-lg">
-            <MessageSquare className="w-6 h-6  cursor-pointer"/>
+            <MessageSquare onClick={()=>handleMarkasRead({id: profileId})} className="w-6 h-6  cursor-pointer"/>
              {unread >0 && (
             <span className='absolute top-0 right-0 w-5 h-5 inline-flex items-center justify-center px-1.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full'>
             
