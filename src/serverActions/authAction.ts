@@ -90,7 +90,7 @@ export const confirmReset = async (formData: FormData) => {
   });
 
   if (error) {
-    return redirect('/forgot-password?message=Could not authenticate user');
+    return redirect('/forgot-password?message=User not found');
   }
 
  
@@ -107,19 +107,20 @@ export async function resetPassword(code: string, formData: FormData) {
 
   const supabase = await createClient();
 
-  // Exchange the code for a session
-  const { error: otpError } = await supabase.auth.exchangeCodeForSession(code);
+  // // Exchange the code for a session
+  // const { error: otpError } = await supabase.auth.exchangeCodeForSession(code);
 
-  if (otpError) {
-    console.error(otpError);
-    return redirect(`/reset-password?message=Link expired or invalid.`);
-  }
+  // if (otpError) {
+  //   console.error(otpError);
+  //   return redirect(`/reset-password?message=Link expired or invalid.`);
+  // }
+
 
   // Update the user's password
   const { error: updateError } = await  supabase.auth.updateUser({
-    password,
+    password: password,
   });
-
+  
   if (updateError) {
     console.error(updateError);
     return redirect(`/reset-password?message=Unable to reset password.`);
