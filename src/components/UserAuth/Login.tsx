@@ -145,7 +145,7 @@ export default function ProfileForm() {
               Sign Up
             </Link>
           </p>
-          <div>
+          {/* <div>
             <p className="text-center text-md text-gray-900">
               Forgot password?
               <Link
@@ -155,7 +155,7 @@ export default function ProfileForm() {
                 Forget password
               </Link>
             </p>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

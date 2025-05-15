@@ -78,53 +78,53 @@ export async function signOut(){
 }
 
 
-export const confirmReset = async (formData: FormData) => {
-  const origin = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000' || "http://192.168.0.193:3000";
-  const email = formData.get('email') as string;
-  const supabase =await createClient();
+// export const confirmReset = async (formData: FormData) => {
+//   const origin = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000' || "http://192.168.0.193:3000";
+//   const email = formData.get('email') as string;
+//   const supabase =await createClient();
 
   
 
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/reset-password`,
-  });
+//   const { error } = await supabase.auth.resetPasswordForEmail(email, {
+//     redirectTo: `${origin}/reset-password`,
+//   });
 
-  if (error) {
-    return redirect('/forgot-password?message=User not found');
-  }
+//   if (error) {
+//     return redirect('/forgot-password?message=User not found');
+//   }
 
  
-};
+// };
 
 
-export async function resetPassword(code: string, formData: FormData) {
-  const password = formData.get('password') as string;
-  const confirmPassword = formData.get('confirmPassword') as string;
+// export async function resetPassword(code: string, formData: FormData) {
+//   const password = formData.get('password') as string;
+//   const confirmPassword = formData.get('confirmPassword') as string;
 
-  if (password !== confirmPassword) {
-    return redirect(`/reset-password?message=Passwords do not match`);
-  }
+//   if (password !== confirmPassword) {
+//     return redirect(`/reset-password?message=Passwords do not match`);
+//   }
 
-  const supabase = await createClient();
+//   const supabase = await createClient();
 
-  // // Exchange the code for a session
-  // const { error: otpError } = await supabase.auth.exchangeCodeForSession(code);
+//   // // Exchange the code for a session
+//   // const { error: otpError } = await supabase.auth.exchangeCodeForSession(code);
 
-  // if (otpError) {
-  //   console.error(otpError);
-  //   return redirect(`/reset-password?message=Link expired or invalid.`);
-  // }
+//   // if (otpError) {
+//   //   console.error(otpError);
+//   //   return redirect(`/reset-password?message=Link expired or invalid.`);
+//   // }
 
 
-  // Update the user's password
-  const { error: updateError } = await  supabase.auth.updateUser({
-    password: password,
-  });
+//   // Update the user's password
+//   const { error: updateError } = await  supabase.auth.updateUser({
+//     password: password,
+//   });
   
-  if (updateError) {
-    console.error(updateError);
-    return redirect(`/reset-password?message=Unable to reset password.`);
-  }
+//   if (updateError) {
+//     console.error(updateError);
+//     return redirect(`/reset-password?message=Unable to reset password.`);
+//   }
 
-  return redirect(`/login?message=Password has been reset. Please sign in.`);
-}
+//   return redirect(`/login?message=Password has been reset. Please sign in.`);
+// }
