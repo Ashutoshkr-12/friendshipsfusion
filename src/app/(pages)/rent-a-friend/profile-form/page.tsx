@@ -77,31 +77,14 @@ const formSchema = z.object({
   services: z.string().min(2, { message: "Please add at least one interest." }),
   gender: z.string(),
   occupation: z.string(),
-  photo1: z
-    .instanceof(FileList)
-    .optional()
-    .refine(
-      (files) => !files?.length || files?.[0]?.size <= MAX_FILE_SIZE,
-      `Max file size is 6MB`
-    )
-    .refine(
-      (files) =>
-        !files?.length || ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      "Only .jpg, .jpeg, .png and .webp formats are supported"
-    ),
-  photo2: z
-    .instanceof(FileList)
-    .optional()
-    .refine(
-      (files) => !files?.length || files?.[0]?.size <= MAX_FILE_SIZE,
-      `Max file size is 6MB`
-    )
-    .refine(
-      (files) =>
-        !files?.length || ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      "Only .jpg, .jpeg, .png and .webp formats are supported"
-    ),
-});
+   photo1: (typeof FileList !== 'undefined' ? z.instanceof(FileList) : z.any()).optional()
+       .refine((files) => !files?.length || files?.[0]?.size <= MAX_FILE_SIZE, `Max file size is 6MB`)
+       .refine((files) => !files?.length || ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type), "Only .jpg, .jpeg, .png and .webp formats are supported"),
+ 
+     photo2: (typeof FileList !== 'undefined' ? z.instanceof(FileList) : z.any()).optional()
+       .refine((files) => !files?.length || files?.[0]?.size <= MAX_FILE_SIZE, `Max file size is 6MB`)
+       .refine((files) => !files?.length || ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type), "Only .jpg, .jpeg, .png and .webp formats are supported"),
+   }); 
 
 const Rentalprofile = () => {
   const [photo1Preview, setPhoto1Preview] = useState<File | null | string>(
