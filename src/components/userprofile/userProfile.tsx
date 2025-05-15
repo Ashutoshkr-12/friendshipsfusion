@@ -15,6 +15,7 @@ import {
   Users,
   LogOut,
   ImageIcon,
+  BadgeX,
 } from "lucide-react";
 import {
   Dialog,
@@ -27,7 +28,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { signOut } from "@/serverActions/authAction";
+import { deleteAccount, signOut } from "@/serverActions/authAction";
 import { AspectRatio } from "../ui/aspect-ratio";
 import { supabase } from "@/utils/supabase/supabase";
 import { useUser } from "@/hooks/profileIdContext";
@@ -50,7 +51,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ userProfile }) => {
   const router = useRouter();
 
   const isOwner = userProfile.id === profileId;
-  console.log(profileId);
+  //console.log(profileId);
 
   const handleUpdate = async () => {
     const { error } = await supabase
@@ -72,6 +73,20 @@ const UserProfile: React.FC<UserProfileProps> = ({ userProfile }) => {
       window.location.reload();
     }
   };
+
+//delete user and userprofile
+  const handleDelete = async () => {
+    try {
+      await deleteAccount();
+      alert("Account deleted successfully.");
+      router.push("/login");
+    } catch (error: any) {
+      console.error("Failed to delete user:", error.message);
+      alert("Failed to delete account: " + error.message);
+    }
+  };
+
+ 
 
   return (
     <>
@@ -179,6 +194,12 @@ const UserProfile: React.FC<UserProfileProps> = ({ userProfile }) => {
                       <LogOut size={16} className="mr-2" />
                       Log Out
                     </Button>
+                   
+      <Button type="submit" variant="destructive" className="w-full mt-4" onClick={handleDelete}>
+        <BadgeX size={16} className="mr-2" />
+        Delete my account
+      </Button>
+   
                   </div>
                 </DialogContent>
               </Dialog>

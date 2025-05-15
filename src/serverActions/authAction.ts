@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-
 import { createClient } from "@/utils/supabase/server";
+import { supabase, supabaseAdmin } from "@/utils/supabase/supabase";
 
 export async function login(formData: FormData) {
   const supabase = await createClient();
@@ -76,6 +76,30 @@ export async function signOut(){
   revalidatePath("/","layout");
   redirect("/login");
 }
+
+export async function deleteAccount() {
+  const session = await getUsersession();
+  const userId = session?.user.id;
+
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  const { error: profileDeleteError } = await supabase
+  .from('profiles')
+  .delete()
+  .eq('user_id', userId);
+
+  if(profileDeleteError){
+    console.error('Error in deleting Profile:',profileDeleteError.message)
+  }
+  const { error } = await supabaseAdmin.auth.admin.deleteUser(userId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+  
 
 
 // export const confirmReset = async (formData: FormData) => {

@@ -4,6 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 // In a real app, these would be set in your environment
 const supabaseUrl =  process.env.NEXT_PUBLIC_SUPABASE_URL! 
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseServiceKey = process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY!
 
 
 
@@ -20,6 +21,11 @@ export const supabase = createClient(
       }
     }
 );
+
+export const supabaseAdmin = createClient(
+  supabaseUrl,
+  supabaseServiceKey
+)
 
 export const ensureStorageBucket = async (bucketName: string) => {
   try {

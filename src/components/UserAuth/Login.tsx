@@ -25,7 +25,10 @@ export default function ProfileForm() {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {},
+    defaultValues: {
+      email: '',
+      password: '',
+    },
   });
 
   const [toggle, setToggle] = useState(false);
