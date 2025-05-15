@@ -145,19 +145,7 @@ const updateAvailability = async (newStatus: boolean) => {
       <div className="container mx-auto overflow-x-hidden py-6 max-w-7xl">
         <div className="w-full flex items-center justify-between px-4 mb-2">
           <h1 className="text-2xl font-bold mb-2 px-4">Rent a Friend</h1>
-          {/* remove this div after complition */}
-          <div className="w-full py-4 flex justify-center items-center">
-          <h1 className="text-md sm:text-lg px-4 text-red-500">
-           &quot;Currently in Testing period, If there is any issue
-          </h1>
-          <a
-            href="mailto:ashutoshkr.8920@gmail.com"
-            className="underline text-blue-600 hover:text-blue-800"
-          >
-            Send feedback"
-          </a>
-        </div>
-
+         
           <div className="flex items-center gap-8">
           {member ?
           (<>
