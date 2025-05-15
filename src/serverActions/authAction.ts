@@ -28,7 +28,7 @@ export async function login(formData: FormData) {
   }
   
   // Pass the token to ProfileForm via a query parameter or shared state
-  redirect(`/?token=${token}`);
+  redirect(`/`);
   
 }
 
