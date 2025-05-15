@@ -19,6 +19,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
+
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -185,12 +194,12 @@ export default function RentalProfilePage({
     };
   }, [rental_id]);
 
+ // console.log(profile.photo_url);
   return (
     <>
       <div className="max-w-4xl mx-auto">
         {isOwner ? (
           <>
-            {" "}
             <h1 className="px-auto py-1 text-lg text-red-500 ">
               NOTE : Accepting payment is on you, after service or before
               service.
@@ -203,23 +212,26 @@ export default function RentalProfilePage({
             <Card className="w-full max-w-md mx-auto md:h-full">
               <CardContent className="p-0">
                 <div className="flex overflow-x-auto space-x-2 no-scrollbar snap-x snap-mandatory">
-                  {Array.isArray(profile.photo_url) ? (
-                    profile.photo_url.map((url: string, index: number) => (
-                      <img
-                        key={index}
-                        src={url}
-                        alt={`${profile.name} ${index + 1}`}
-                        className="h-96 w-full flex-shrink-0 object-cover rounded-t-lg snap-start"
-                      />
-                    ))
-                  ) : (
-                    <img
-                      src={profile.photo_url}
-                      alt={`${profile.name}`}
-                      className="h-96 min-w-full object-cover rounded-t-lg snap-start"
-                    />
-                  )}
+                   <Carousel className="w-full h-full">
+      <CarouselContent>
+        { Array.isArray(profile.photo_url) ? profile.photo_url.map(( photo, index) => (
+          <CarouselItem key={index}>
+            <div className="p-1">
+              <Card>
+                <CardContent className="flex items-center justify-center ">
+                  <img className="text-4xl font-semibold" src={photo} />
+                </CardContent>
+              </Card>
+            </div>
+          </CarouselItem>
+        )) : (null)}
+      </CarouselContent>
+      <CarouselPrevious />
+      <CarouselNext />
+    </Carousel>
+
                 </div>
+                
               </CardContent>
             </Card>
           </div>
@@ -229,7 +241,6 @@ export default function RentalProfilePage({
             <Card>
               {!isOwner ? (
                 <>
-                  {" "}
                   <CardHeader className="">
                     <h2 className="text-lg font-semibold">Book a Hangout</h2>
                   </CardHeader>
@@ -241,12 +252,12 @@ export default function RentalProfilePage({
                     <h1 className="text-2xl font-bold">
                       {profile.name}, {profile.age}
                     </h1>
-                    <div className="flex items-center mt-1 text-yellow-500">
+                    {/* <div className="flex items-center mt-1 text-yellow-500">
                       <Star size={18} className="fill-yellow-500" />
                       <span className="ml-1">
                         {4.8} ({147} reviews)
                       </span>
-                    </div>
+                    </div> */}
                     <div className="flex items-center mt-2 text-gray-500">
                       <MapPin size={18} />
                       <span className="ml-1">{profile.location}</span>
@@ -402,7 +413,8 @@ export default function RentalProfilePage({
                               updating your data...
                             </span>
                           ) : (
-                            " Save"
+                            ' Save'
+      
                           )}
                         </Button>
                       </DialogContent>

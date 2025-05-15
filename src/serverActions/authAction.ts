@@ -39,6 +39,9 @@ export async function signup(formData: FormData) {
   const { error } = await supabase.auth.signUp({
     email: formData.get("email") as string,
     password: formData.get("password") as string,
+    options: {
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/login`,
+    },
   });
 
   if(!error){
@@ -46,7 +49,8 @@ export async function signup(formData: FormData) {
    redirect("/login?message=A confirmation mail has been send to your email click that link to proceed");
  }
   if(error) {
-    redirect("/signup?message=could not authenticate user");
+    console.error('Error from signup:', error.message);
+    redirect(`/signup?message=${error.message}`);
   }
 }
 
@@ -72,7 +76,6 @@ export async function signOut(){
   revalidatePath("/","layout");
   redirect("/login");
 }
-
 
 
 export const confirmReset = async (formData: FormData) => {

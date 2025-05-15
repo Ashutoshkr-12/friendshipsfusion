@@ -24,7 +24,7 @@ export default function Requestpage(){
             setLoading(true);
             const profileid = params.profile_id as string;
             setProfileId(profileid);
-            console.log(profileid); // Use profileid directly instead of profileId
+            //console.log(profileid); // Use profileid directly instead of profileId
 
         try {
             const response = await fetch(`/api/booking-request?profile_id=${profileid}`,{

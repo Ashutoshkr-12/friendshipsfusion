@@ -13,6 +13,7 @@ interface MatchWithDetails {
   id: string;
   otherUser: messageProfile;
   lastMessage: Message | null;
+  type: string;
 }
 
 export default function ChatListPage() {
@@ -33,7 +34,7 @@ export default function ChatListPage() {
         if(profileId){
         const { data: matchesData, error: matchesError } = await supabase
           .from('matches')
-          .select('id,user1_id,user2_id,created_at')
+          .select('id,user1_id,user2_id,created_at,type')
           .or(`and(user1_id.eq.${profileId}),and(user2_id.eq.${profileId})`);
 
         if (matchesError) {
@@ -79,7 +80,7 @@ export default function ChatListPage() {
             };
           })
         );
-    
+
 
         setMatches(matchDetails.filter((m): m is MatchWithDetails => m !== null));
         setLoading(false);
@@ -174,7 +175,8 @@ export default function ChatListPage() {
   if (error) {
     return <div className="p-4 text-center text-red-600">{error}</div>;
   }
-//console.log(otheruserId);
+
+
   return (
  <AppLayout>
     <div className="p-4 sm:p-6 max-w-3xl mx-auto select-none">
@@ -218,12 +220,14 @@ export default function ChatListPage() {
                             addSuffix: true,
                           })}
                         </p>
+                        
                         <div className='flex w-full justify-end'>
                 {unread >0 && (
                   <span className=' w-7 h-7 inline-flex items-center justify-center px-1.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full'>
              {unread}
             </span>
           )}
+         
           </div>
                       </>
                     ) : (

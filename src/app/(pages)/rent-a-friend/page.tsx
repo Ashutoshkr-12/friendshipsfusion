@@ -120,16 +120,18 @@ useEffect(()=>{
 
 //check and update availability
 const updateAvailability = async (newStatus: boolean) => {
+ // console.log("Trying to update to:", newStatus, "for profile:", profileId);
   const { error } = await supabase
     .from('rental_profiles')
     .update({ availability: newStatus })
     .eq('profile_id', profileId);
 
-  if (!error) {
-    setAvailibility(newStatus);
-    toast.success('Availability updated');
+  if (error) {
+    console.error("Error from Supabase:", error.message);
+    toast.error("Failed to update availability");
   } else {
-    toast.error('Failed to update availability');
+    setAvailibility(newStatus);
+    toast.success("Availability updated");
   }
 };
 
@@ -143,11 +145,22 @@ const updateAvailability = async (newStatus: boolean) => {
       <div className="container mx-auto overflow-x-hidden py-6 max-w-7xl">
         <div className="w-full flex items-center justify-between px-4 mb-2">
           <h1 className="text-2xl font-bold mb-2 px-4">Rent a Friend</h1>
+          {/* remove this div after complition */}
+          <div className="w-full py-4 flex justify-center items-center">
+          <h1 className="text-md sm:text-lg px-4 text-red-500">
+           &quot;Currently in Testing period, If there is any issue
+          </h1>
+          <a
+            href="mailto:ashutoshkr.8920@gmail.com"
+            className="underline text-blue-600 hover:text-blue-800"
+          >
+            Send feedback"
+          </a>
+        </div>
+
           <div className="flex items-center gap-8">
-         
-    
           {member ?
-          <>
+          (<>
           <div>
          
          <div className='relative w-10 h-10 flex items-center justify-center'>
@@ -208,12 +221,12 @@ const updateAvailability = async (newStatus: boolean) => {
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
-          </>
-           : <div>
+          </>)
+           : (<div>
             <Link href={`/rent-a-friend/profile-form`}>
             <Button className="bg-blue-400 hover:bg-white cursor-pointer">Become a member</Button>
             </Link>
-                        </div>}
+                        </div>)}
             </div>
         </div>
         <p className="text-gray-600 mb-6 px-4">

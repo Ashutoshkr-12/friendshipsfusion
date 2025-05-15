@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, SquarePen, Star } from "lucide-react";
 import {
   Dialog,
@@ -126,7 +126,13 @@ export default function Reviewpage({
                 <div key={index} className="p-4 border rounded-lg">
                   <div className="flex items-center gap-3 mb-2">
                     <Avatar className="h-10 w-10">
-                      <AvatarFallback>{data.profiles.avatar}</AvatarFallback>
+                      <AvatarImage
+    src={data.profiles.gender === 'Female' ? '/woman.png' : '/man.png'}
+    alt="Profile"
+  />
+  <AvatarFallback>
+    {data.profiles.gender === 'Female' ? 'F' : 'M'}
+  </AvatarFallback>
                     </Avatar>
                     <div>
                       <div className="font-medium">{data.profiles.name}</div>

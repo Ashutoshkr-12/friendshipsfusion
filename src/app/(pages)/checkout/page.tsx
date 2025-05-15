@@ -4,8 +4,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import React from 'react'
 import { toast } from "sonner";
+import { supabase } from "@/utils/supabase/supabase";
+import { useUser } from "@/hooks/profileIdContext";
+import { useRouter } from "next/navigation";
 
 export default function Checkoutpage() {
+  const { profileId } = useUser()
+  const router = useRouter();
   const benefits = [
   'Access to Rent a Friend',
   'View matched users profiles',
@@ -14,9 +19,19 @@ export default function Checkoutpage() {
   'Early access to new features',
 ];
 
-  const handleBuyNow = () => {
+  const handleBuyNow = async() => {
     // Redirect to payment gateway or open payment modal
   toast('Currently in developing phase');
+  const { error } = await supabase
+  .from('profiles')
+  .update({premium_status: true})
+  .eq('id',profileId);
+
+  if(error){
+    console.error('Error in premium status:',error.message);
+  }else{
+    router.push(`/rent-a-friend`);
+  }
   };
 
   return (
