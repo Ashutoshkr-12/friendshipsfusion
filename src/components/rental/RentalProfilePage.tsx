@@ -36,6 +36,7 @@ import { supabase } from "@/utils/supabase/supabase";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import Reviewpage from "./reviewTable";
 
+
 export default function RentalProfilePage({
   profile,
   rental_id,

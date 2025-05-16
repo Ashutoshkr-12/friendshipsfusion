@@ -92,7 +92,17 @@ export async function deleteAccount() {
 
   if(profileDeleteError){
     console.error('Error in deleting Profile:',profileDeleteError.message)
-  }
+  };
+
+  const {error: userDeletingError} =  await supabase
+  .from('users')
+  .delete()
+  .eq('id',userId);
+
+  if(userDeletingError){
+    console.error('Error in deleting user:',userDeletingError.message);
+  };
+  
   const { error } = await supabaseAdmin.auth.admin.deleteUser(userId);
 
   if (error) {

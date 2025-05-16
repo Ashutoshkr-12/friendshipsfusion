@@ -177,7 +177,11 @@ const Rentalprofile = () => {
             .from(POSTS_BUCKET)
             .getPublicUrl(photoFileName);
 
-          photoUrls.push(photoUrlData.publicUrl);
+            const cleanedUrl = photoUrlData.publicUrl
+            .trim()
+            .replace(/^(\n|%0A)+/,''); //clean the newline/prefix
+
+          photoUrls.push(cleanedUrl);
         }
       }
 

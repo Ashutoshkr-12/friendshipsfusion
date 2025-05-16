@@ -48,10 +48,10 @@ export default function ProfileForm() {
       formData.append("email", data.email);
       formData.append("password", data.password);
       await signup(formData);
+      toast('A confirmation link has been sent to your email');
     } catch (error) {
       console.error(error);
     } finally {
-      toast('A confirmation link has been sent to your email');
       setLoading(false);
     }
   };
