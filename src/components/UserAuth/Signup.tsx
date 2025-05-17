@@ -48,7 +48,7 @@ export default function ProfileForm() {
       formData.append("email", data.email);
       formData.append("password", data.password);
       await signup(formData);
-      toast('A confirmation link has been sent to your email');
+      toast('A confirmation link has been sent to your email, check your spam folder too.');
     } catch (error) {
       console.error(error);
     } finally {

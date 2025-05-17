@@ -46,7 +46,7 @@ export async function signup(formData: FormData) {
 
   if(!error){
    revalidatePath("/login", "layout");
-   redirect("/login?message=A confirmation mail has been send to your email click that link to proceed");
+   redirect("/login?message=A confirmation mail has been send to your email, If you cant get it check spam folder too.");
  }
   if(error) {
     console.error('Error from signup:', error.message);
