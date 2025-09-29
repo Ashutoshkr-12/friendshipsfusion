@@ -131,8 +131,7 @@ const ProfileInputForm = () => {
       const photoFiles: File[] = [];
       if (formData.photo1?.[0]) photoFiles.push(formData.photo1[0]);
       if (formData.photo2?.[0]) photoFiles.push(formData.photo2[0]);
-      
-
+  
        // Ensure storage buckets exist
     await ensureStorageBucket(AVATAR_BUCKET);
     await ensureStorageBucket(POSTS_BUCKET);
@@ -162,7 +161,6 @@ const ProfileInputForm = () => {
     .trim()
     .replace(/^(\n|%0A)+/, ''); //remove newline or %0A
       }
-  
       // Upload photos if provided
       const photoUrls: string[] = [];
       if (photoFiles && photoFiles.length > 0) {

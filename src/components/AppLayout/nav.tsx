@@ -67,9 +67,9 @@ if(error){
           <button onClick={() => handleClick(`/home/${profileId}`)} className="active:bg-slate-200 active:text-black px-4 py-4 rounded-lg">
             <Home />
           </button>
-          <button onClick={() => handleClick('/rent-a-friend')} className="active:bg-slate-200 active:text-black px-4 py-4 rounded-lg">
+          {/* <button onClick={() => handleClick('/rent-a-friend')} className="active:bg-slate-200 active:text-black px-4 py-4 rounded-lg">
             <Users />
-          </button>
+          </button> */}
            <div className='relative w-10 h-10 flex items-center justify-center'>
           <button onClick={() => handleClick('/message')} className="active:bg-slate-200 active:text-black px-4 py-4 rounded-lg">
             <MessageSquare onClick={()=>handleMarkasRead({id: profileId})} className="w-6 h-6  cursor-pointer"/>
