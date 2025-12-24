@@ -1,3 +1,8 @@
+<h1>Login credentials</h1>
+<span>email: villainhyper.12@gmail.com , password: 121212</span>
+
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
